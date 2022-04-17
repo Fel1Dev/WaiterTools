@@ -1,6 +1,6 @@
 # Waiter Tools Services
 
-WaiterTools is a NodeJs API to get information from a restaurant created in _____ app using the associated user and password.
+WaiterTools is a NodeJs API to get information from a restaurant created in WApp using the associated user and password.
 
 
 ## Installation & Run
@@ -24,12 +24,12 @@ There are different endpoints to process and get data:
 ## Authentication
 ### Request
 `POST /api/v1/authentication`
-```json
-{
-    "authenticationType": "Basic ",
-    "authenticationCredentials": "$HASH"
-}
-```
+
+    {
+        "authenticationType": "Basic ",
+        "authenticationCredentials": "$HASH"
+    }
+
 ### Response
     HTTP/1.1 200 OK
     Date: Thu, 24 Feb 2011 12:36:32 GMT
@@ -42,17 +42,8 @@ There are different endpoints to process and get data:
     "restaurantId":"cc3d4fa20e2","restaurantName":"Areperia","waiterioToken":"715cb5715cb5"
     }
 
-### /projects/:title
-* `GET` : Get a project
-* `PUT` : Update a project
-* `DELETE` : Delete a project
-
 ## Todo
 - [ ] Add todo tasks
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
