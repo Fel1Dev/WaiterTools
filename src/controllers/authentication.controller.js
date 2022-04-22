@@ -5,6 +5,7 @@ const { EXT_API_URL, EXT_AUTH_PATH } = require('../config/index');
 class AuthenticationController {
 
     async authentication(req, res) {
+        console.log(req.body);
         let authenticationType = req.body.authenticationType;
         let hash = req.body.authenticationCredentials;
         const authPath = EXT_API_URL + EXT_AUTH_PATH;
@@ -13,10 +14,9 @@ class AuthenticationController {
             authenticationCredentials: hash
         };
 
-        console.log('path:' + authPath);
-        console.table(body);
+        console.log('path: ' + authPath);
         try {
-            await axios.post(authPath, body)
+            axios.post(authPath, body)
                 .then(response => {
                     return res.send({ error: false, data: response.data });
                 });
