@@ -2,7 +2,7 @@ const express = require('express');
 const server = express();
 const helmet = require('helmet');
 
-const { AuthRoute, ReportRoute } = require('../routes/index')
+const { AuthRoute, ReportRoute, UserRoute } = require('../routes/index')
 
 //Use requests as JSON
 server.use(express.json());
@@ -13,6 +13,8 @@ server.use(helmet());
 server.use('/', AuthRoute);
 
 server.use('/', ReportRoute);
+
+server.use('/', UserRoute);
 
 module.exports = server;
 
