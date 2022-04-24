@@ -14,7 +14,6 @@ server.use('/', AuthRoute);
 
 server.use('/', ReportRoute);
 
-
 module.exports = server;
 
 
