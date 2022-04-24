@@ -1,8 +1,8 @@
 const axios = require('axios');
-const { OrderFilterService } = require('../services/index')
+
 
 const { EXT_API_URL, EXT_REPORTS_PATH } = require('../config/index');
-
+const { OrderFilterService, OrderValueCounter } = require('../services/index');
 class ReportController {
 
     static async getOrders(restaurantId, startTime, endTime) {
@@ -37,13 +37,14 @@ class ReportController {
     async createCallcenterReport(req, res) {
         console.log(req.query);
         let { startTime, endTime, restaurantId } = req.query;
-
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
-        // Call service to filter
-        const filteredData = OrderFilterService.callCenterFilter(responseData.data);
+        // Call service to filter        
+        const serviceFiltered = OrderFilterService.callCenterFilter(responseData.data);
+        const usersFiltered = OrderFilterService.callCenterUserFilter(serviceFiltered);
+        const recordFields = OrderValueCounter.getRecordFields(usersFiltered);
         //Call sevice to call sheet!
 
-        return res.send(filteredData);
+        return res.send(recordFields);
     }
 }
 
