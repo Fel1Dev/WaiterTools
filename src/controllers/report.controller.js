@@ -2,7 +2,7 @@ const axios = require('axios');
 
 
 const { EXT_API_URL, EXT_REPORTS_PATH } = require('../config/index');
-const { OrderFilterService, OrderValueCounter } = require('../services/index');
+const { OrderFilterService, OrderValueCounter, WriteGoogleSheet } = require('../services/index');
 class ReportController {
 
     static async getOrders(restaurantId, startTime, endTime) {
@@ -42,9 +42,23 @@ class ReportController {
         const serviceFiltered = OrderFilterService.callCenterFilter(responseData.data);
         const usersFiltered = OrderFilterService.callCenterUserFilter(serviceFiltered);
         const recordFields = OrderValueCounter.getRecordFields(usersFiltered);
-        //Call sevice to call sheet!
 
-        return res.send(recordFields);
+        //await WriteGoogleSheet.writeGoogleSheet(test);
+        //Call sevice to call sheet!
+        let writeObject = null;
+
+        try {
+            writeObject = await WriteGoogleSheet.writeData(recordFields);
+            if (writeObject.status === 200) {
+                return res.json({ msg: 'Spreadsheet update sucessfully!', data: recordFields });
+            }
+            return res.json({ msg: 'Something went wrong' });
+        } catch (e) {
+            console.log('Error updating the spreadsheet', e);
+            //res.send(recordFields);
+            res.status(500).send();
+        }
+
     }
 }
 

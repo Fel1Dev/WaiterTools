@@ -2,30 +2,37 @@ const moment = require("moment");
 const { DELIVERY_DATA } = require("../assets/DELIVERY_DATA");
 const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY } = require("../config/constants.config");
 
+const defaultZone = {
+    name: TAKEAWAY,
+    price: 0,
+    zoneNote: ''
+};
 
 function getRecordFields(orders) {
-    return orders.map(order => {
+    let output = [];
+    orders.forEach(order => {
         let zone = getOrderZone(order);
-        if (!zone) {
-            zone = {
-                name: TAKEAWAY,
-                price: 0,
-                zoneNote: ''
-            }
-        }
-        return {
-            date: moment(order.creationTime).format(DDMMYYYY_FORMAT), //23/04/2022
-            fullDate: moment(order.creationTime).format(FULL_FORMAT), //23/04/2022
-            total: getOrderValue(order),
-            zone: zone.name,
-            priceZone: zone.price,
-            zoneNote: zone.note,
-            customer: order.customerName,
-            address: order.customerAddress,
-            phone: order.customerPhone,
-            commet: 'VALIDATION PENDING'
-        }
-    })
+        if (!zone) zone = defaultZone;
+
+        output.push(
+            [
+                order._id,
+                moment(order.creationTime).format(FULL_FORMAT), //23/04/2022
+                getOrderValue(order),
+                null,
+                zone.name,
+                null,
+                null,
+                null,
+                order.customerName,
+                order.customerAddress,
+                order.customerPhone,
+                zone.note,
+                'NEW'
+            ]
+        );
+    });
+    return output;
 }
 
 function getOrderZone(order) {

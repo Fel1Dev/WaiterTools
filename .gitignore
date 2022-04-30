@@ -10,6 +10,9 @@
 # dependencies
 /node_modules
 
+# Google json credential
+/src/assets/credentials/*.json
+
 # profiling files
 chrome-profiler-events*.json
 
