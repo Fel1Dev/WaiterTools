@@ -1,4 +1,4 @@
-const { TABLE, TAKEAWAY, DELIVERY, MELO_USER_ID, SALO_USER_ID } = require('../config/constants.config')
+const { TABLE, TAKEAWAY, DELIVERY, MELO_USER_ID, SALO_USER_ID, CANCELLED } = require('../config/constants.config')
 
 function orderTypeFilter(orders, orderTypes) {
     return orders.filter((order) => {
@@ -21,6 +21,21 @@ function orderUserFilter(orders, userList) {
     });
 }
 
+function cancelledStatusFilter(orders) {
+    return orders.filter((order) => {
+        const stamps = order.itemstamps;
+        let cancelledItems = 0;
+        let itemsAmount = 0;
+        for (let key in stamps) {
+            itemsAmount++;
+            if (stamps[key].status === CANCELLED) {
+                cancelledItems++;
+            }
+        }
+        return !(itemsAmount === cancelledItems);
+    });
+}
+
 function callCenterFilter(orders) {
     return orderTypeFilter(orders, [TAKEAWAY, DELIVERY]);
 }
@@ -36,5 +51,6 @@ function callCenterUserFilter(orders) {
 module.exports = {
     callCenterFilter: callCenterFilter,
     onlyTableFilter: onlyTableFilter,
-    callCenterUserFilter: callCenterUserFilter
+    callCenterUserFilter: callCenterUserFilter,
+    cancelledStatusFilter: cancelledStatusFilter
 }

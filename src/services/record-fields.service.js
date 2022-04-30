@@ -17,7 +17,8 @@ function getRecordFields(orders) {
         output.push(
             [
                 order._id,
-                moment(order.creationTime).format(FULL_FORMAT), //23/04/2022
+                moment(order.creationTime).format(DDMMYYYY_FORMAT), //23/04/2022
+                moment(order.creationTime).format(FULL_FORMAT), //HH:MM:SS
                 getOrderValue(order),
                 null,
                 zone.name,

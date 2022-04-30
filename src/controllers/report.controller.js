@@ -1,8 +1,9 @@
 const axios = require('axios');
 
-
+const { SHOW, WRITE } = require('../config/constants.config')
 const { EXT_API_URL, EXT_REPORTS_PATH } = require('../config/index');
 const { OrderFilterService, OrderValueCounter, WriteGoogleSheet } = require('../services/index');
+const orderFilterService = require('../services/order-filter.service');
 class ReportController {
 
     static async getOrders(restaurantId, startTime, endTime) {
@@ -36,27 +37,27 @@ class ReportController {
     // Get Callcenter reports
     async createCallcenterReport(req, res) {
         console.log(req.query);
-        let { startTime, endTime, restaurantId } = req.query;
+        let { startTime, endTime, restaurantId, requestType } = req.query;
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
         // Call service to filter        
         const serviceFiltered = OrderFilterService.callCenterFilter(responseData.data);
         const usersFiltered = OrderFilterService.callCenterUserFilter(serviceFiltered);
-        const recordFields = OrderValueCounter.getRecordFields(usersFiltered);
+        const notCancelledOrders = orderFilterService.cancelledStatusFilter(usersFiltered);
+        const recordFields = OrderValueCounter.getRecordFields(notCancelledOrders);
 
-        //await WriteGoogleSheet.writeGoogleSheet(test);
-        //Call sevice to call sheet!
-        let writeObject = null;
-
-        try {
-            writeObject = await WriteGoogleSheet.writeData(recordFields);
-            if (writeObject.status === 200) {
-                return res.json({ msg: 'Spreadsheet update sucessfully!', data: recordFields });
+        if (requestType && WRITE === requestType.toUpperCase()) {
+            try {
+                let writeObject = await WriteGoogleSheet.writeData(recordFields);
+                if (writeObject.status === 200) {
+                    return res.json({ msg: 'Spreadsheet update sucessfully!', data: recordFields });
+                }
+                return res.json({ msg: 'Something went wrong' });
+            } catch (e) {
+                console.log('Error updating the spreadsheet', e);
+                res.status(500).send();
             }
-            return res.json({ msg: 'Something went wrong' });
-        } catch (e) {
-            console.log('Error updating the spreadsheet', e);
-            //res.send(recordFields);
-            res.status(500).send();
+        } else {
+            res.send({ message: 'Read-only request', data: recordFields });
         }
 
     }
