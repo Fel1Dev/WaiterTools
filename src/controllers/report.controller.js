@@ -41,8 +41,8 @@ class ReportController {
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
         // Call service to filter        
         const serviceFiltered = OrderFilterService.callCenterFilter(responseData.data);
-        const usersFiltered = OrderFilterService.callCenterUserFilter(serviceFiltered);
-        const notCancelledOrders = orderFilterService.cancelledStatusFilter(usersFiltered);
+        //const usersFiltered = OrderFilterService.callCenterUserFilter(serviceFiltered);
+        const notCancelledOrders = orderFilterService.cancelledStatusFilter(serviceFiltered);
         const recordFields = OrderValueCounter.getRecordFields(notCancelledOrders);
 
         if (requestType && WRITE === requestType.toUpperCase()) {

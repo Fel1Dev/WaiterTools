@@ -27,7 +27,7 @@ function getRecordFields(orders) {
                 null,
                 order.customerName,
                 order.customerAddress,
-                order.customerPhone,
+                order.customerPhone ? '\'' + order.customerPhone : null,
                 zone.note,
                 'NEW'
             ]
