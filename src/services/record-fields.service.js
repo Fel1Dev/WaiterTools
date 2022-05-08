@@ -12,8 +12,6 @@ function getRecordFields(orders) {
     let output = [];
     orders.forEach(order => {
         let zone = getOrderZone(order);
-        if (!zone) zone = defaultZone;
-
         output.push(
             [
                 order._id,
@@ -48,11 +46,7 @@ function getOrderZone(order) {
             return zone
         }
     }
-    return {
-        name: TAKEAWAY,
-        price: 0,
-        zoneNote: ''
-    }
+    return defaultZone;
 }
 
 function getOrderValue(order) {
