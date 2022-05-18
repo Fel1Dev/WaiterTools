@@ -10,6 +10,7 @@ const defaultZone = {
 
 function getRecordFields(orders) {
     let output = [];
+    orders = setTakewayFristOrder(orders);
     orders.forEach(order => {
         let zone = getOrderZone(order);
         output.push(
@@ -61,7 +62,21 @@ function getOrderValue(order) {
     return total;
 }
 
-
+function setTakewayFristOrder(orders) {
+    return orders.sort((firstItem, secondItem) => {
+        const firstService = firstItem.service.toUpperCase();
+        const secondService = secondItem.service.toUpperCase();
+        if (secondService < firstService) {
+            return -1;
+          }
+          if (secondService > firstService) {
+            return 1;
+          }
+        
+          // names must be equal
+          return 0;
+    });
+}
 
 module.exports = {
     getRecordFields: getRecordFields

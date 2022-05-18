@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const { SHOW, WRITE } = require('../config/constants.config')
 const { EXT_API_URL, EXT_REPORTS_PATH } = require('../config/index');
-const { OrderFilterService, OrderValueCounter, WriteGoogleSheet } = require('../services/index');
+const { OrderFilterService, OrderValueCounter, GoogleSheetOperations } = require('../services/index');
 const orderFilterService = require('../services/order-filter.service');
 class ReportController {
 
@@ -47,7 +47,7 @@ class ReportController {
 
         if (requestType && WRITE === requestType.toUpperCase()) {
             try {
-                let writeObject = await WriteGoogleSheet.writeData(recordFields);
+                let writeObject = await GoogleSheetOperations.writeData(recordFields);
                 if (writeObject.status === 200) {
                     return res.json({ msg: 'Spreadsheet update sucessfully!', data: recordFields });
                 }

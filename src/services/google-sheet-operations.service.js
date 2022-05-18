@@ -6,7 +6,7 @@ const SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
 const authentication = async () => {
     const auth = new google.auth.GoogleAuth({
-        keyFile: GOOGLE_TOKEN_FILE,
+        keyFile: '/home/atlon/workspaces/WaiterTools/src/assets/credentials/google-credentials.json',
         scopes: SCOPE
     });
 
