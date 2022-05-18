@@ -14,7 +14,6 @@ module.exports = {
     CALLCENTER_REPORT_PATH: process.env.CALLCENTER_REPORT_PATH,
     USER_PATH: process.env.USER_PATH,
     MENU_PATH: process.env.MENU_PATH,
-    GOOGLE_TOKEN_PATH: process.env.GOOGLE_TOKEN_PATH,
     GOOGLE_TOKEN_FILE: process.env.GOOGLE_TOKEN_FILE,
     GOOGLE_SHEET_ID: process.env.GOOGLE_SHEET_ID
 };
