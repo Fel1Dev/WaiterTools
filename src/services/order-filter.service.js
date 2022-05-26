@@ -20,7 +20,7 @@ function orderUserFilter(orders, userList) {
         }
     });
 }
-
+// Delete all cancelled orders
 function cancelledStatusFilter(orders) {
     return orders.filter((order) => {
         const stamps = order.itemstamps;
