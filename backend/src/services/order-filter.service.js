@@ -52,7 +52,10 @@ function onlyTableFilter(orders) {
 }
 
 function callCenterUserFilter(orders) {
-    return orderUserFilter(orders, [MELO_USER_ID, SALO_USER_ID]);
+    let takeaways = orderTypeFilter(orders, [TAKEAWAY]);
+    takeaways = orderUserFilter(takeaways, [MELO_USER_ID, SALO_USER_ID]);
+    const deliveries = orderTypeFilter(orders, [DELIVERY]);
+    return [].concat(takeaways, deliveries);
 }
 
 module.exports = {

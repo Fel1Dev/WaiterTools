@@ -52,10 +52,9 @@ class ReportController {
             endTime
         );
         // Call service to filter
-        const serviceFiltered = OrderFilterService.callCenterFilter(
+        const serviceFiltered = OrderFilterService.callCenterUserFilter(
             responseData.data
         );
-        //const usersFiltered = OrderFilterService.callCenterUserFilter(serviceFiltered);
         const notCancelledOrders =
             orderFilterService.cancelledStatusFilter(serviceFiltered);
         const recordFields =
