@@ -1,13 +1,12 @@
 const { google } = require("googleapis");
-const { GOOGLE_SHEET_ID, GOOGLE_TOKEN_FILE } = require("../config/index");
-
+const { GOOGLE_SHEET_ID, GOOGLE_TOKEN_PATH } = require("../config/index");
+const path = require("path");
 //All permissons
 const SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
 const authentication = async () => {
     const auth = new google.auth.GoogleAuth({
-        //keyFile: '/home/atlon/workspaces/WaiterTools/backend/src/assets/credentials/google-credentials.json',
-        keyFile: "../assets/credentials/google-credentials.json",
+        keyFile: path.join(__dirname, GOOGLE_TOKEN_PATH),
         scopes: SCOPE,
     });
 

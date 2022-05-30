@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const { SHOW, WRITE } = require("../config/constants.config");
+const { WRITE } = require("../config/constants.config");
 const { EXT_API_URL, EXT_REPORTS_PATH } = require("../config/index");
 const {
     OrderFilterService,
