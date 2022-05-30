@@ -1,4 +1,11 @@
-const { TABLE, TAKEAWAY, DELIVERY, MELO_USER_ID, SALO_USER_ID, CANCELLED } = require('../config/constants.config')
+const {
+    TABLE,
+    TAKEAWAY,
+    DELIVERY,
+    MELO_USER_ID,
+    SALO_USER_ID,
+    CANCELLED,
+} = require("../config/constants.config");
 
 function orderTypeFilter(orders, orderTypes) {
     return orders.filter((order) => {
@@ -52,5 +59,5 @@ module.exports = {
     callCenterFilter: callCenterFilter,
     onlyTableFilter: onlyTableFilter,
     callCenterUserFilter: callCenterUserFilter,
-    cancelledStatusFilter: cancelledStatusFilter
-}
+    cancelledStatusFilter: cancelledStatusFilter,
+};
