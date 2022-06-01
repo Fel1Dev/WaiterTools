@@ -5,9 +5,8 @@
 export const environment = {
   production: false,
 
-  API_URL: 'https://jsonplaceholder.typicode.com',
-  backend: 'https://api.waiterio.com',
-  authenticationPath: 'api/v1/authentication',
+  BASE_URL: 'https://api.waiterio.com',
+  AUTH_PATH: 'api/v1/authentication',
 };
 
 /*
