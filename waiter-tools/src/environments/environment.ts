@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
 
-  BASE_URL: 'https://api.waiterio.com',
+  BASE_URL: 'localhost:4002/',
   AUTH_PATH: 'api/v1/authentication',
 };
 

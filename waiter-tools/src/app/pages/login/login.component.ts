@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
     if (this.authenticationService.tokenValue) {
       this.router.navigate(['/']);
     }
+    console.log('Login started');
   }
 
   ngOnInit(): void {
@@ -33,6 +34,7 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
+    console.log("ngOnInit")
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
