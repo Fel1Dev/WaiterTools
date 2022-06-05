@@ -59,11 +59,11 @@ function getOrderValue(order) {
     let total = 0;
     const stamps = order.itemstamps;
     for (let key in stamps) {
-        if (stamps[key].status !== CANCELLED) {
-            total += stamps[key].item.price;
+         if (stamps[key].status !== CANCELLED) {
+            total += Number(stamps[key].item.price);
         }
         for (const extra of stamps[key].extras) {
-            total += extra.price;
+            total += Number(extra.price);
         }
     }
     return total;
