@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AppConstants } from '../shared/appConstants';
 
 @Injectable({
   providedIn: 'root',
@@ -27,23 +28,13 @@ export class AuthenticationService {
       authenticationType: 'Basic ',
       authenticationCredentials: credentials,
     };
+    const urlAuth = `${environment.BASE_URL}${environment.AUTH_PATH}`;
 
-    return this.http
-      .post<any>(`${environment.BASE_URL}${environment.AUTH_PATH}`, bodyData)
-      .pipe(
-        map((response) => {
-          localStorage.setItem('waiterioToken', response.data.waiterioToken);
-          localStorage.setItem(
-            'currentRestaurantId',
-            response.data.roles[0].restaurantId
-          );
-          localStorage.setItem('currentUserId', response.data.user._id);
-        })
-      );
+    return this.http.post<any>(urlAuth, bodyData);
   }
 
   logout() {
-    localStorage.removeItem('waiterioToken');
+    localStorage.removeItem(AppConstants.WAITERIO_TOKEN);
     this.router.navigate(['/login']);
   }
 }

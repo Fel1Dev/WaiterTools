@@ -17,9 +17,9 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log('Guard!');
     let tokenData = this.authenticationService.tokenValue;
-    if (tokenData) {
+    console.table(tokenData);
+    if (tokenData.waiterioToken) {
       return true;
     } else {
       // not logged in so redirect to login page with the return url

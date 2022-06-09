@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { AppConstants } from 'src/app/shared/appConstants';
 
 import { AuthenticationService } from '../../services';
 @Component({
@@ -26,7 +27,6 @@ export class LoginComponent implements OnInit {
     if (this.authenticationService.tokenValue) {
       this.router.navigate(['/']);
     }
-    console.log('Login started');
   }
 
   ngOnInit(): void {
@@ -34,7 +34,6 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
-    console.log("ngOnInit")
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
@@ -55,15 +54,23 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.authenticationService
       .login(this.f['username'].value, this.f['password'].value)
-      .pipe(first())
       .subscribe({
-        complete: () => {
+        next: (response: any) => {
+          localStorage.setItem(
+            AppConstants.WAITERIO_TOKEN,
+            response.data.waiterioToken
+          );
+          localStorage.setItem(
+            AppConstants.RESTAURANT_ID,
+            response.data.roles[0].restaurantId
+          );
+          localStorage.setItem(AppConstants.USER_ID, response.data.user._id);
           this.router.navigate([this.returnUrl]);
         },
         error: () => {
           this.error = this.error;
           this.loading = false;
-        },
+        }
       });
   }
 }
