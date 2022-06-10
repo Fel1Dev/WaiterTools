@@ -15,11 +15,16 @@ class AuthenticationController {
 
         console.log("path: " + authPath);
         try {
-            axios.post(authPath, body).then((response) => {
-                return res.send({ error: false, data: response.data });
-            });
+            axios
+                .post(authPath, body)
+                .then((response) => {
+                    return res.send({ error: false, data: response.data });
+                })
+                .catch((error) => {
+                    console.error("Error during POST Authentication process: " + error.message);
+                });
         } catch (error) {
-            console.error("Error during Authentication process: " + error);
+            console.error("Error during Authentication process: " + error.message);
         }
     }
 }

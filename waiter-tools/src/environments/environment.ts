@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
 
-  BASE_URL: 'http://localhost:4002/',
+  BASE_URL: 'http://192.168.20.27:4002/',
   AUTH_PATH: 'api/v1/authentication',
 };
 

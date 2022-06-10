@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
         error: () => {
           this.error = this.error;
           this.loading = false;
-        }
+        },
       });
   }
 }
