@@ -1,18 +1,36 @@
-<div class="container">
-    <h3>Procesar Domicilios</h3>
-    <form>
-        <div class="form-group">
-          <label for="datePicker">Seleccionar fecha</label>
-          <input type="datetime-local" id="datePicker" class="form-control">
+<div class="border p-4">
+  <h3>Procesar Domicilios</h3>
+  <form [formGroup]="deliveryProcessor" (ngSubmit)="OnSubmit()">
+    <div class="form-group">
+      <label for="datePicker">Seleccionar fecha</label>
+      <input
+        type="date"
+        formControlName="dateProcess"
+        id="datePicker"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['dateProcess'].errors }"
+      />
+      <div
+        *ngIf="submitted && f['dateProcess'].errors"
+        class="invalid-feedback"
+      >
+        <div *ngIf="f['dateProcess'].errors['required']">
+          la fecha es requerida
         </div>
-        <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1">
-        </div>
-        <div class="form-group form-check">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-          <label class="form-check-label" for="exampleCheck1">Check me out</label>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+      </div>
+    </div>
+    <div class="row justify-content-around">
+      <button type="submit" [disabled]="loading" class="btn btn-primary">
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Procesar
+      </button>
+      <button class="btn btn-danger" [routerLink]="['home']">Atras</button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger mt-3 mb-0">
+      {{ error }}
+    </div>
+  </form>
 </div>
