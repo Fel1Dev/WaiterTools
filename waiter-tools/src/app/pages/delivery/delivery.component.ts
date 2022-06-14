@@ -6,8 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./delivery.component.css'],
 })
 export class DeliveryComponent implements OnInit {
+  dateSelected!: boolean;
   constructor() {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  getDateValue(event:any) {
+    console.log(event);
   }
 }

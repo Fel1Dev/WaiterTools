@@ -1,5 +1,7 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
+import { AppConstants } from 'src/app/shared/appConstants';
 
 @Component({
   selector: 'app-delivery-processor',
@@ -7,14 +9,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./delivery-processor.component.css'],
 })
 export class DeliveryProcessorComponent implements OnInit {
+  @Input() visible!: boolean;
+  @Output() dateSelected = new EventEmitter<Date>();
   deliveryProcessor!: FormGroup;
   loading = false;
   submitted = false;
+  currentDate!: string;
   error = '';
 
-  constructor(
-    private formBuilder: FormBuilder,
-  ) {}  
+  constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit(): void {
     this.deliveryProcessor = this.formBuilder.group({
@@ -34,7 +37,17 @@ export class DeliveryProcessorComponent implements OnInit {
       return;
     }
     this.loading = true;
-    //Call report process
-    //Change flag to show delivery-viewer component
+    const componentDate = this.f['dateProcess'].value;
+    this.currentDate = moment().format(AppConstants.DATE_FORMAT);
+
+    if (componentDate <= this.currentDate) {
+      this.dateSelected.emit(componentDate);
+      this.visible = false;
+    } else {
+      this.deliveryProcessor.controls['dateProcess'].setErrors({
+        futureDate: 'true',
+      });
+      this.loading = false;
+    }
   }
 }

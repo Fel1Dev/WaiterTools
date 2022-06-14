@@ -1,7 +1,14 @@
 <!-- <div class="col-md-5 offset-md-3 mt-5"> -->
-<div class="row">
-  <app-delivery-processor></app-delivery-processor>
-</div>
-<div>
-  <app-delivery-viewer></app-delivery-viewer>
+<div class="row justify-content-md-center">
+  <div class="col-md-6">
+    <div>
+      <app-delivery-processor
+        [visible]="!dateSelected"
+        (dateSelected)="getDateValue($event)"
+      ></app-delivery-processor>
+    </div>
+    <div>
+      <app-delivery-viewer [visible]="dateSelected"></app-delivery-viewer>
+    </div>
+  </div>
 </div>
