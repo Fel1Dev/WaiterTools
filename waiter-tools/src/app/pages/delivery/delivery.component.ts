@@ -6,12 +6,20 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./delivery.component.css'],
 })
 export class DeliveryComponent implements OnInit {
-  dateSelected!: boolean;
+  dateSelected!: string;
+  showViewer: boolean = false;
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    //Temporal
+    this.dateSelected = '2020-06-14';
+    this.showViewer = true;
+  }
 
-  getDateValue(event:any) {
-    console.log(event);
+  getDateValue(event: any) {
+    if (event) {
+      this.showViewer = true;
+      this.dateSelected = event;
+    }
   }
 }

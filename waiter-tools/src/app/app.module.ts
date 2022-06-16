@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DeliveryComponent } from './pages/delivery/delivery.component';
 import { DeliveryProcessorComponent } from './component/delivery-processor/delivery-processor.component';
 import { DeliveryViewerComponent } from './component/delivery-viewer/delivery-viewer.component';
+import { DeliveryRecordComponent } from './component/delivery-record/delivery-record.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { DeliveryViewerComponent } from './component/delivery-viewer/delivery-vi
     LoginComponent,
     DeliveryComponent,
     DeliveryProcessorComponent,
-    DeliveryViewerComponent    
+    DeliveryViewerComponent,
+    DeliveryRecordComponent    
   ],
   imports: [
     BrowserModule,

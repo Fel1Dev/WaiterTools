@@ -8,7 +8,10 @@
       ></app-delivery-processor>
     </div>
     <div>
-      <app-delivery-viewer [visible]="dateSelected"></app-delivery-viewer>
+      <app-delivery-viewer
+        [visible]="showViewer"
+        [dateSelected]="dateSelected"
+      ></app-delivery-viewer>
     </div>
   </div>
 </div>

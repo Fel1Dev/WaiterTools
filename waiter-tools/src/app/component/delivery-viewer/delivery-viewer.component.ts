@@ -8,9 +8,11 @@ import { Component, Input, OnInit } from '@angular/core';
 export class DeliveryViewerComponent implements OnInit {
 
   @Input() visible!: boolean;
+  @Input() dateSelected!: string;
   constructor() { }
 
   ngOnInit(): void {
+    console.log('Domi Viewer');
   }
 
 }
