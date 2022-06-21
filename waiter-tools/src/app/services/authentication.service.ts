@@ -7,8 +7,7 @@ import { AppConstants } from '../shared/appConstants';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthenticationService {  
-
+export class AuthenticationService {
   constructor(private router: Router, private http: HttpClient) {}
 
   public get tokenValue(): any {
@@ -20,7 +19,9 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string) {
-    let credentials: string = window.btoa(username.toLowerCase() + ':' + password);
+    let credentials: string = window.btoa(
+      username.toLowerCase() + ':' + password
+    );
     let bodyData: any = {
       authenticationType: 'Basic ',
       authenticationCredentials: credentials,
