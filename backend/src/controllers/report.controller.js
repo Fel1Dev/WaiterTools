@@ -34,11 +34,7 @@ class ReportController {
         console.log(req.query);
         let { restaurantId, startTime, endTime } = req.query;
 
-        const responseData = await ReportController.getOrders(
-            restaurantId,
-            startTime,
-            endTime
-        );
+        const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
         return res.send(responseData);
     }
 
@@ -46,38 +42,32 @@ class ReportController {
     async createCallcenterReport(req, res) {
         console.log(req.query);
         let { startTime, endTime, restaurantId, requestType } = req.query;
-        const responseData = await ReportController.getOrders(
-            restaurantId,
-            startTime,
-            endTime
-        );
-        // Call service to filter
-        const serviceFiltered = OrderFilterService.callCenterUserFilter(
-            responseData.data
-        );
-        const notCancelledOrders =
-            orderFilterService.cancelledStatusFilter(serviceFiltered);
-        const recordFields =
-            OrderValueCounter.getRecordFields(notCancelledOrders);
+        if (restaurantId && endTime && restaurantId) {
+            const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
+            // Call service to filter
+            const serviceFiltered = OrderFilterService.callCenterUserFilter(responseData.data);
+            const notCancelledOrders = orderFilterService.cancelledStatusFilter(serviceFiltered);
+            const recordFields = OrderValueCounter.getRecordFields(notCancelledOrders);
 
-        if (requestType && WRITE === requestType.toUpperCase()) {
-            try {
-                let writeObject = await GoogleSheetOperations.writeData(
-                    recordFields
-                );
-                if (writeObject.status === 200) {
-                    return res.json({
-                        msg: "Spreadsheet update sucessfully!",
-                        data: recordFields,
-                    });
+            if (requestType && WRITE === requestType.toUpperCase()) {
+                try {
+                    let writeObject = await GoogleSheetOperations.writeData(recordFields);
+                    if (writeObject.status === 200) {
+                        return res.json({
+                            msg: "Spreadsheet update sucessfully!",
+                            data: recordFields,
+                        });
+                    }
+                    return res.json({ msg: "Something went wrong" });
+                } catch (e) {
+                    console.log("Error updating the spreadsheet", e);
+                    res.status(500).send();
                 }
-                return res.json({ msg: "Something went wrong" });
-            } catch (e) {
-                console.log("Error updating the spreadsheet", e);
-                res.status(500).send();
+            } else {
+                res.send({ message: "Read-only request", data: recordFields });
             }
         } else {
-            res.send({ message: "Read-only request", data: recordFields });
+            res.status(400).json({ stats: 400, message: "Bad parameters." }).send();
         }
     }
 }
