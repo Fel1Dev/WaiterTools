@@ -2,8 +2,7 @@ const {
     TABLE,
     TAKEAWAY,
     DELIVERY,
-    MELO_USER_ID,
-    SALO_USER_ID,
+    CALLCENTER_USERS_IDS,
     CANCELLED,
 } = require("../config/constants.config");
 
@@ -25,7 +24,7 @@ function orderUserFilter(orders, userList) {
                 return true;
             }
         }
-    });
+    });    
 }
 // Delete all cancelled orders
 function cancelledStatusFilter(orders) {
@@ -53,7 +52,7 @@ function onlyTableFilter(orders) {
 
 function callCenterUserFilter(orders) {
     let takeaways = orderTypeFilter(orders, [TAKEAWAY]);
-    takeaways = orderUserFilter(takeaways, [MELO_USER_ID, SALO_USER_ID]);
+    takeaways = orderUserFilter(takeaways, CALLCENTER_USERS_IDS);
     const deliveries = orderTypeFilter(orders, [DELIVERY]);
     return [].concat(takeaways, deliveries);
 }

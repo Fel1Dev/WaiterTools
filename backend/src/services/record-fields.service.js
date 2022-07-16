@@ -84,6 +84,18 @@ function setTakewayFristOrder(orders) {
     });
 }
 
+function getOrderCreatorName(orders) {
+    return orders.map((order) => {
+        const usersIds = [].concat(order.usersIds || []);
+        for (const userId of usersIds) {
+            if (userList.includes(userId)) {
+                
+                return order
+            }
+        }
+    });
+}
+
 module.exports = {
     getRecordFields: getRecordFields,
 };
