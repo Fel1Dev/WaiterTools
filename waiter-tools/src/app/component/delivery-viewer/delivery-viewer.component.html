@@ -1,8 +1,29 @@
-<div class="p-4" *ngIf="visible">
-  <h3>Domicilios</h3>
-  <div class="container">
-    <div *ngFor="">
-      <app-delivery-record></app-delivery-record>
+<div class="container-fluid p-4" *ngIf="visible">
+  <div class="row">
+    <div class="col-8">
+      <button class="btn btn-outline-danger m-1">Atras</button>
     </div>
+    <div class="col-4">    
+      <button [disabled]="loading" class="btn btn-outline-primary m-1">
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Reprocesar
+      </button>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-8">
+      <span>{{ dateSelected | date: "longDate" }}</span>
+    </div>
+    <div class="col-4">
+      <span class="font-weight-bold">Pago Total: $4.000</span>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div *ngFor="let delivery of deliveryList">
+    <app-delivery-record [deliveryData]="delivery"></app-delivery-record>
   </div>
 </div>

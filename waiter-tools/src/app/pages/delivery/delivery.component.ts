@@ -12,7 +12,7 @@ export class DeliveryComponent implements OnInit {
 
   ngOnInit(): void {
     //Temporal
-    this.dateSelected = '2020-06-14';
+    this.dateSelected = '2022-07-15';
     this.showViewer = true;
   }
 
