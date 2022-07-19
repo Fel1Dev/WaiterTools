@@ -1,12 +1,30 @@
-<div class="row">
-  <div class="col-4">
+<div
+  class="row pt-1 pb-1 border border-secondary rounded bg-light d-flex align-items-center"
+  style="min-height: 75px"
+  *ngIf="deliveryData.deliveryType != 'TAKEAWAY'"  
+>
+  <div class="col-3 font-weight-bold">
     {{ deliveryData.clientName }}
   </div>
-  <div class="col-3">
-    {{ deliveryData.deliveryType}}    
+  <div class="col-5">
+    <div>
+      {{ deliveryData.address }}
+    </div>
+    <div class="small">
+      {{ deliveryData.deliveryType }}
+    </div>
+    <div class="small font-italic">
+      <span *ngIf="deliveryData.note">"{{ deliveryData.note }}"</span>
+    </div>
   </div>
-  <div class="col-2">
-    {{ deliveryData.totalValue}}
-  </div>
-  
+  <div class="col-4 text-right">
+    <span class="small">💰</span>
+    <span class="text-success">
+      {{ deliveryData.totalValue | currency: "":"":"1.0" }}
+    </span>
+    <div class="small">
+      <span>🛵 </span>
+      <span class="text-danger">({{ 4000 | currency: "":"":"1.0" }})</span>
+    </div>
+  </div>  
 </div>
