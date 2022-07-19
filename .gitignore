@@ -8,10 +8,11 @@
 /bazel-out
 
 # dependencies
-/node_modules
+backend/node_modules
+waiter-tools/node_modules
 
 # Google json credential
-/src/assets/credentials/*.json
+/backend/src/assets/credentials/*.json
 
 # profiling files
 chrome-profiler-events*.json
@@ -33,7 +34,12 @@ chrome-profiler-events*.json
 !.vscode/extensions.json
 .history/*
 
+# profiling files
+chrome-profiler-events*.json
+
 # misc
+/.angular/cache
+/waiter-tools/.angular
 /.sass-cache
 /connect.lock
 /coverage
