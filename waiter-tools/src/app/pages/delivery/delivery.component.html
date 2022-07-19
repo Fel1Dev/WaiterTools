@@ -1,6 +1,6 @@
 <div class="p-2" *ngIf="selector">
   <div class="text-center">
-    <h4>Fecha proceso domicilios</h4>
+    <h4>Obtener domicilios</h4>
   </div>
   <form [formGroup]="deliveryProcessor" (ngSubmit)="OnSubmit()">
     <div class="row justify-content-center">
@@ -11,7 +11,7 @@
           formControlName="dateProcess"
           id="datePicker"
           class="form-control"
-          style="width: 300px;"
+          style="width: 300px"
           [ngClass]="{ 'is-invalid': submitted && f['dateProcess'].errors }"
         />
         <div
@@ -33,13 +33,7 @@
       <button class="btn btn-outline-danger" [routerLink]="['home']">
         Atras
       </button>
-      <button type="submit" [disabled]="loading" class="btn btn-primary">
-        <span
-          *ngIf="loading"
-          class="spinner-border spinner-border-sm mr-1"
-        ></span>
-        Procesar
-      </button>
+      <button type="submit" class="btn btn-primary">Procesar</button>
     </div>
   </form>
 </div>
@@ -51,15 +45,7 @@
       </button>
     </div>
     <div class="col text-right">
-      <button
-        [disabled]="loading"
-        class="btn btn-outline-primary m-1"
-        (click)="restart()"
-      >
-        <span
-          *ngIf="loading"
-          class="spinner-border spinner-border-sm mr-1"
-        ></span>
+      <button class="btn btn-outline-primary m-1" (click)="restart()">
         Reprocesar
       </button>
     </div>
@@ -78,9 +64,11 @@
   </div>
 </div>
 <div class="container-fluid mb-3" *ngIf="viewer">
-  <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
   <div *ngFor="let delivery of deliveryList">
     <app-delivery-record [deliveryData]="delivery"></app-delivery-record>
+  </div>
+  <div class="row justify-content-center" *ngIf="loading">
+    <span class="spinner-border spinner-border-sm mr-1"></span>
   </div>
   <div *ngIf="deliveryList.length === 0">
     <h3 class="text-danger">No hay datos</h3>

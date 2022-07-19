@@ -7,7 +7,7 @@ export const environment = {
 
   BASE_URL: 'http://192.168.20.27:4002/',
   AUTH_PATH: 'api/v1/authentication',
-  CALLCENTER_PATH: 'api/v1/reports/callcenter'
+  DELIVERY_PATH: 'api/v1/reports/delivery'
 };
 
 /*
