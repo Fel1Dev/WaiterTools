@@ -9,8 +9,6 @@ import { LoginComponent } from './pages/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { DeliveryComponent } from './pages/delivery/delivery.component';
-import { DeliveryProcessorComponent } from './component/delivery-processor/delivery-processor.component';
-import { DeliveryViewerComponent } from './component/delivery-viewer/delivery-viewer.component';
 import { DeliveryRecordComponent } from './component/delivery-record/delivery-record.component';
 
 @NgModule({
@@ -19,9 +17,7 @@ import { DeliveryRecordComponent } from './component/delivery-record/delivery-re
     NavbarComponent,
     HomeComponent,
     LoginComponent,
-    DeliveryComponent,
-    DeliveryProcessorComponent,
-    DeliveryViewerComponent,
+    DeliveryComponent,    
     DeliveryRecordComponent    
   ],
   imports: [
