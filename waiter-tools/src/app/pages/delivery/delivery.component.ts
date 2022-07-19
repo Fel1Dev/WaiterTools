@@ -28,8 +28,9 @@ export class DeliveryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentDate = moment().format(AppConstants.DATE_FORMAT);
     this.deliveryProcessor = this.formBuilder.group({
-      dateProcess: ['', Validators.required],
+      dateProcess: [this.currentDate, Validators.required],
     });
   }
 
@@ -46,10 +47,9 @@ export class DeliveryComponent implements OnInit {
     }
     this.loading = true;
     const componentDate = this.f['dateProcess'].value;
-    this.currentDate = moment().format(AppConstants.DATE_FORMAT);
-    
+
     // stop if bad date
-    if (componentDate >= this.currentDate) {
+    if (componentDate > this.currentDate) {
       this.deliveryProcessor.controls['dateProcess'].setErrors({
         futureDate: 'true',
       });
@@ -59,36 +59,39 @@ export class DeliveryComponent implements OnInit {
     this.selector = false;
     this.viewer = true;
     this.dateSelected = componentDate;
-    this.getRecords();
-    this.totalValue = this.deliveryDataService.getTotalValue(this.deliveryList);
+    this.getRecords();    
   }
 
   getRecords() {
     this.loading = true;
     if (this.dateSelected) {
       const tokenValue = this.authenticationService.tokenValue;
-      const restaurantId = tokenValue.currentRestaurantId;      
+      const restaurantId = tokenValue.currentRestaurantId;
       this.deliveryDataService
-        //.getCallcenterReport(this.dateSelected, restaurantId)
-        .getCallcenterReport2(this.dateSelected, restaurantId)
+        .getCallcenterReport(this.dateSelected, restaurantId)
+        //.getCallcenterReport2(this.dateSelected, restaurantId)
         .subscribe({
           next: (rawData: any) => {
-            this.deliveryList =
-              this.deliveryDataService.processRecords(rawData.data);
+            this.deliveryList = this.deliveryDataService.processRecords(
+              rawData.data
+            );
+            this.totalValue = this.deliveryDataService.getTotalValue(this.deliveryList);
+            this.loading = false;
           },
           error: (err) => {
             this.loading = false;
             this.error = err;
           },
         });
-      this.loading = false;
     }
   }
 
-  restart() {    
+  restart() {
     this.viewer = false;
     this.selector = true;
     this.submitted = false;
+    this.deliveryList = [];
+    this.totalValue = 0;
     //this.deliveryProcessor.reset();
   }
 }

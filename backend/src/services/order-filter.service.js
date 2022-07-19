@@ -24,7 +24,7 @@ function orderUserFilter(orders, userList) {
                 return true;
             }
         }
-    });    
+    });
 }
 // Delete all cancelled orders
 function cancelledStatusFilter(orders) {
@@ -57,9 +57,14 @@ function callCenterUserFilter(orders) {
     return [].concat(takeaways, deliveries);
 }
 
+function onlyDeliveryOrders(orders) {
+    return orderTypeFilter(orders, [DELIVERY]);
+}
+
 module.exports = {
     callCenterFilter: callCenterFilter,
     onlyTableFilter: onlyTableFilter,
+    onlyDeliveryOrders: onlyDeliveryOrders,
     callCenterUserFilter: callCenterUserFilter,
     cancelledStatusFilter: cancelledStatusFilter,
 };

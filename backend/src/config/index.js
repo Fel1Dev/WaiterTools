@@ -12,6 +12,7 @@ module.exports = {
     AUTH_PATH: process.env.AUTH_PATH,
     REPORTS_PATH: process.env.REPORTS_PATH,
     CALLCENTER_REPORT_PATH: process.env.CALLCENTER_REPORT_PATH,
+    CALLCENTER_DELIVERY_PATH: process.env.CALLCENTER_DELIVERY_PATH,
     USER_PATH: process.env.USER_PATH,
     MENU_PATH: process.env.MENU_PATH,
     GOOGLE_TOKEN_PATH: process.env.GOOGLE_TOKEN_PATH,

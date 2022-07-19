@@ -12,7 +12,7 @@ export class DeliveryDataService {
   constructor(private http: HttpClient) {}
 
   getCallcenterReport(selectedDate: string, restaurantId: string) {
-    const callcenterUrl = `${environment.BASE_URL}${environment.CALLCENTER_PATH}`;
+    const callcenterUrl = `${environment.BASE_URL}${environment.DELIVERY_PATH}`;
     const startTime = moment(selectedDate).unix() * 1000;
     const endTime = moment(selectedDate).add(1, 'day').unix() * 1000;
     console.log('path:' + callcenterUrl);
@@ -34,16 +34,16 @@ export class DeliveryDataService {
     let deliveryList: DeliveryData[] = [];
     for (const delivery of rawData) {
       const newDelivery: DeliveryData = {
-        id: delivery[0],
-        date: moment(delivery[2]).toDate(),
-        totalValue: delivery[3],
-        deliveryValue: 0,
-        deliveryType: delivery[5],
-        clientName: delivery[9],
-        address: delivery[10],
-        cellphone: delivery[11],
-        note: delivery[12],
-        user: '',
+        id: delivery.id,
+        date: moment(delivery.date).toDate(),
+        totalValue: delivery.totalValue,
+        deliveryValue: delivery.deliveryValue,
+        deliveryType: delivery.deliveryType,
+        clientName: delivery.clientName,
+        address: delivery.address,
+        cellphone: delivery.cellphone,
+        note: delivery.note,
+        user: delivery.user,
       };
       deliveryList.push(newDelivery);
     }
