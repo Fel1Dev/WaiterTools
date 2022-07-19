@@ -81,8 +81,14 @@ export class DeliveryComponent implements OnInit {
             this.error = err;
           },
         });
-
       this.loading = false;
     }
+  }
+
+  restart() {    
+    this.viewer = false;
+    this.selector = true;
+    this.submitted = false;
+    //this.deliveryProcessor.reset();
   }
 }

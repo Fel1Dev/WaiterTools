@@ -1,5 +1,5 @@
 <div
-  class="row pt-1 pb-1 border border-secondary rounded bg-light d-flex align-items-center"
+  class="row pt-1 pb-1 border border-secondary bg-light d-flex align-items-center border-right-0 border-left-0"
   style="min-height: 75px"
   *ngIf="deliveryData.deliveryType != 'TAKEAWAY'"  
 >
@@ -24,7 +24,7 @@
     </span>
     <div class="small">
       <span>🛵 </span>
-      <span class="text-danger">({{ 4000 | currency: "":"":"1.0" }})</span>
+      <span class="text-danger">({{ deliveryData.deliveryValue| currency: "":"":"1.0" }})</span>
     </div>
   </div>  
 </div>
