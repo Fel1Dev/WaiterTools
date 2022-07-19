@@ -1,11 +1,6 @@
 const moment = require("moment");
 const { DELIVERY_DATA } = require("../assets/DELIVERY_DATA");
-const {
-    DDMMYYYY_FORMAT,
-    FULL_FORMAT,
-    TAKEAWAY,
-    CANCELLED,
-} = require("../config/constants.config");
+const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require("../config/constants.config");
 
 const defaultZone = {
     name: TAKEAWAY,
@@ -38,6 +33,26 @@ function getRecordFields(orders) {
     return output;
 }
 
+function getRecordObjects(orders) {
+    let deliveryList = [];
+    orders.forEach((order) => {
+        let zone = getOrderZone(order);
+        deliveryList.push({
+            id: order._id,
+            date: moment(order.creationTime).toDate(),
+            totalValue: getOrderValue(order),
+            deliveryValue: zone.price,
+            deliveryType: zone.name,
+            clientName: order.customerName,
+            address: order.customerAddress,
+            cellphone: order.customerPhone ? "'" + order.customerPhone : null,
+            note: zone.note,
+            user: "",
+        });
+    });
+    return deliveryList;
+}
+
 function getOrderZone(order) {
     const stamps = order.itemstamps;
     for (let key in stamps) {
@@ -59,7 +74,7 @@ function getOrderValue(order) {
     let total = 0;
     const stamps = order.itemstamps;
     for (let key in stamps) {
-         if (stamps[key].status !== CANCELLED) {
+        if (stamps[key].status !== CANCELLED) {
             total += Number(stamps[key].item.price);
         }
         for (const extra of stamps[key].extras) {
@@ -89,8 +104,7 @@ function getOrderCreatorName(orders) {
         const usersIds = [].concat(order.usersIds || []);
         for (const userId of usersIds) {
             if (userList.includes(userId)) {
-                
-                return order
+                return order;
             }
         }
     });
@@ -98,4 +112,5 @@ function getOrderCreatorName(orders) {
 
 module.exports = {
     getRecordFields: getRecordFields,
+    getRecordObjects: getRecordObjects,
 };
