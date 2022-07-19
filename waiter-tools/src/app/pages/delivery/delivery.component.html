@@ -1,0 +1,88 @@
+<div class="p-2" *ngIf="selector">
+  <div class="text-center">
+    <h4>Fecha proceso domicilios</h4>
+  </div>
+  <form [formGroup]="deliveryProcessor" (ngSubmit)="OnSubmit()">
+    <div class="row justify-content-center">
+      <div class="form-group">
+        <label for="datePicker">Seleccionar fecha</label>
+        <input
+          type="date"
+          formControlName="dateProcess"
+          id="datePicker"
+          class="form-control"
+          style="width: 300px;"
+          [ngClass]="{ 'is-invalid': submitted && f['dateProcess'].errors }"
+        />
+        <div
+          *ngIf="submitted && f['dateProcess'].errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f['dateProcess'].errors['required']">
+            La fecha es requerida
+          </div>
+          <div *ngIf="f['dateProcess'].errors['futureDate']">
+            La fecha debe ser menor a la fecha actual ({{
+              currentDate | date: "dd/MM/YYYY"
+            }}).
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-around">
+      <button class="btn btn-outline-danger" [routerLink]="['home']">
+        Atras
+      </button>
+      <button type="submit" [disabled]="loading" class="btn btn-primary">
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Procesar
+      </button>
+    </div>
+  </form>
+</div>
+<div class="p-3" *ngIf="viewer">
+  <div class="row">
+    <div class="col">
+      <button class="btn btn-outline-danger m-1" [routerLink]="['home']">
+        Atras
+      </button>
+    </div>
+    <div class="col text-right">
+      <button
+        [disabled]="loading"
+        class="btn btn-outline-primary m-1"
+        (click)="restart()"
+      >
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Reprocesar
+      </button>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col">
+      <span>Fecha: {{ dateSelected | date: "d/MM/y" }}</span>
+    </div>
+    <div class="col text-center">
+      <div>
+        <span class="font-weight-bold"
+          >Total: {{ totalValue | currency: "":"":"1.0" }}</span
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid mb-3" *ngIf="viewer">
+  <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+  <div *ngFor="let delivery of deliveryList">
+    <app-delivery-record [deliveryData]="delivery"></app-delivery-record>
+  </div>
+  <div *ngIf="deliveryList.length === 0">
+    <h3 class="text-danger">No hay datos</h3>
+  </div>
+</div>
