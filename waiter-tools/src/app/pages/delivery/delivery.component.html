@@ -63,7 +63,7 @@
     </div>
   </div>
 </div>
-<div class="container-fluid mb-3" *ngIf="viewer">
+<div class="container-sm mb-3 min-vw-60" *ngIf="viewer">
   <div *ngFor="let delivery of deliveryList">
     <app-delivery-record [deliveryData]="delivery"></app-delivery-record>
   </div>
