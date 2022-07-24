@@ -12,7 +12,7 @@ backend/node_modules
 waiter-tools/node_modules
 
 # Google json credential
-/backend/src/assets/credentials/*.json
+/backend/google-credentials.json
 
 # profiling files
 chrome-profiler-events*.json
