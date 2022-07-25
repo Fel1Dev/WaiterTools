@@ -4,7 +4,7 @@ const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require("../config
 
 const defaultZone = {
     name: TAKEAWAY,
-    price: 0,
+    price: 0,    
     zoneNote: "",
 };
 
@@ -41,7 +41,8 @@ function getRecordObjects(orders) {
             id: order._id,
             date: moment(order.creationTime).toDate(),
             totalValue: getOrderValue(order),
-            deliveryValue: zone.price,
+            userDeliveryPrice: zone.price,
+            deliveryPrice: zone.deliveryPrice,
             deliveryType: zone.name,
             clientName: order.customerName,
             address: order.customerAddress,
@@ -60,9 +61,12 @@ function getOrderZone(order) {
             const zone = {
                 name: stamps[key].item.name,
                 price: stamps[key].item.price,
+                deliveryPrice: 0,
                 note: stamps[key].note,
             };
-            if (DELIVERY_DATA.find((item) => item.name === zone.name)) {
+            let deliveryZone = DELIVERY_DATA.find((item) => item.name.toLocaleLowerCase() === zone.name.toLocaleLowerCase());
+            if (deliveryZone) {
+                zone.deliveryPrice = deliveryZone.deliveryPrice;
                 return zone;
             }
         }
