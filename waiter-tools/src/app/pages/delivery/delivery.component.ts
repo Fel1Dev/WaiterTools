@@ -69,7 +69,6 @@ export class DeliveryComponent implements OnInit {
       const restaurantId = tokenValue.currentRestaurantId;
       this.deliveryDataService
         .getCallcenterReport(this.dateSelected, restaurantId)
-        //.getCallcenterReport2(this.dateSelected, restaurantId)
         .subscribe({
           next: (rawData: any) => {
             this.deliveryList = this.deliveryDataService.processRecords(
