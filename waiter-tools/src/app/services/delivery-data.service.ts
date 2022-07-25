@@ -37,7 +37,8 @@ export class DeliveryDataService {
         id: delivery.id,
         date: moment(delivery.date).toDate(),
         totalValue: delivery.totalValue,
-        deliveryValue: delivery.deliveryValue,
+        userDeliveryPrice: delivery.userDeliveryPrice,
+        deliveryPrice: delivery.deliveryValue,
         deliveryType: delivery.deliveryType,
         clientName: delivery.clientName,
         address: delivery.address,
@@ -53,7 +54,7 @@ export class DeliveryDataService {
   getTotalValue(deliveryList: DeliveryData[]) {
     let totalDelivery: number = 0;
     for (const delivery of deliveryList) {
-      totalDelivery += Number(delivery.deliveryValue);
+      totalDelivery += Number(delivery.deliveryPrice);
     }
     return totalDelivery;
   }
