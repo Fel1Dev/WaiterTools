@@ -51,15 +51,13 @@
     </div>
   </div>
   <div class="row mt-2">
-    <div class="col">
+    <div class="col" *ngIf="!loading">
       <span>Fecha: {{ dateSelected | date: "d/MM/y" }}</span>
     </div>
     <div class="col text-center">
-      <div>
-        <span class="font-weight-bold"
-          >Total domicilio: {{ totalValue | currency: "":"":"1.0" }}</span
-        >
-      </div>
+      <span class="font-weight-bold" *ngIf="totalDelivery != 0"
+        >Total domicilio: {{ totalDelivery | currency: "":"":"1.0" }}
+      </span>
     </div>
   </div>
 </div>

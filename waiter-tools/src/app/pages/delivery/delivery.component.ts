@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { AuthenticationService, DeliveryDataService } from 'src/app/services';
@@ -10,11 +10,12 @@ import { AppConstants } from 'src/app/shared/appConstants';
   styleUrls: ['./delivery.component.css'],
 })
 export class DeliveryComponent implements OnInit {
+  //totalDelivery: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  totalDelivery: number = 0;
   selector: boolean = true;
   viewer: boolean = false;
   dateSelected!: string;
   deliveryList: any[] = [];
-  totalValue: number = 0;
   deliveryProcessor!: FormGroup;
   loading = false;
   submitted = false;
@@ -24,7 +25,7 @@ export class DeliveryComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private deliveryDataService: DeliveryDataService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService    
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +60,7 @@ export class DeliveryComponent implements OnInit {
     this.selector = false;
     this.viewer = true;
     this.dateSelected = componentDate;
-    this.getRecords();    
+    this.getRecords();
   }
 
   getRecords() {
@@ -70,11 +71,11 @@ export class DeliveryComponent implements OnInit {
       this.deliveryDataService
         .getCallcenterReport(this.dateSelected, restaurantId)
         .subscribe({
-          next: (rawData: any) => {
+          next: (rawData: any) => {            
             this.deliveryList = this.deliveryDataService.processRecords(
               rawData.data
-            );
-            this.totalValue = rawData.totalDelivery;
+            );            
+            this.totalDelivery = rawData.totalDelivery;
             this.loading = false;
           },
           error: (err) => {
@@ -90,7 +91,6 @@ export class DeliveryComponent implements OnInit {
     this.selector = true;
     this.submitted = false;
     this.deliveryList = [];
-    this.totalValue = 0;
-    //this.deliveryProcessor.reset();
+    this.totalDelivery = 0;
   }
 }
