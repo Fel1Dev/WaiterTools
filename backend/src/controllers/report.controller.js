@@ -86,9 +86,11 @@ class ReportController {
         const deliveryOrders = OrderFilterService.onlyDeliveryOrders(responseData.data);
         const notCancelledOrders = OrderFilterService.cancelledStatusFilter(deliveryOrders);
         const objectReport = OrderFormatterService.getRecordObjects(notCancelledOrders);        
+        const totalDelivery = OrderFormatterService.getTotalDeliveryValue(objectReport);
         return res.json({
             msg: "Read-only request",
             data: objectReport,
+            totalDelivery: totalDelivery,
         });
     }
 }
