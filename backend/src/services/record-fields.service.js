@@ -103,6 +103,10 @@ function setTakewayFristOrder(orders) {
     });
 }
 
+function getTotalDeliveryValue(ordersObj) {
+    return ordersObj.reduce((acum, item) => acum + item.deliveryPrice, 0);    
+}
+
 function getOrderCreatorName(orders) {
     return orders.map((order) => {
         const usersIds = [].concat(order.usersIds || []);
@@ -117,4 +121,5 @@ function getOrderCreatorName(orders) {
 module.exports = {
     getRecordFields: getRecordFields,
     getRecordObjects: getRecordObjects,
+    getTotalDeliveryValue: getTotalDeliveryValue
 };
