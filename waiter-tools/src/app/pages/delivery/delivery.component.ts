@@ -75,7 +75,7 @@ export class DeliveryComponent implements OnInit {
             this.deliveryList = this.deliveryDataService.processRecords(
               rawData.data
             );
-            this.totalValue = this.deliveryDataService.getTotalValue(this.deliveryList);
+            this.totalValue = rawData.totalDelivery;
             this.loading = false;
           },
           error: (err) => {
