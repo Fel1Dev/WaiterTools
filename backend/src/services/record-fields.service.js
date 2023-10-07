@@ -1,11 +1,11 @@
-const moment = require("moment");
-const { DELIVERY_DATA } = require("../assets/DELIVERY_DATA");
-const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require("../config/constants.config");
+const moment = require('moment');
+const { DELIVERY_DATA } = require('../assets/DELIVERY_DATA');
+const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require('../config/constants.config');
 
 const defaultZone = {
     name: TAKEAWAY,
-    price: 0,    
-    zoneNote: "",
+    price: 0,
+    zoneNote: '',
 };
 
 function getRecordFields(orders) {
@@ -27,7 +27,7 @@ function getRecordFields(orders) {
             order.customerAddress,
             order.customerPhone ? "'" + order.customerPhone : null,
             zone.note,
-            "NEW",
+            'NEW',
         ]);
     });
     return output;
@@ -48,10 +48,54 @@ function getRecordObjects(orders) {
             address: order.customerAddress,
             cellphone: order.customerPhone ? "'" + order.customerPhone : null,
             note: zone.note,
-            user: "",
+            user: '',
         });
     });
     return deliveryList;
+}
+
+function getShakeRecords(orders, shakesMenuMap) {
+    let shakeRows = [];
+    let shakeRowsText = '';
+    let totalSales = 0;
+    orders.forEach((order) => {
+        for (let key in order.itemstamps) {
+            const itemStamp = order.itemstamps[key];
+            const item = itemStamp.item;
+            const fullDateFormat = 'MM/DD/YYYY HH:mm:ss';
+            const simpleDate = 'MM/DD/YYYY';
+            const creationDate = moment(order.creationTime).format(simpleDate);
+            const creationTime = moment(order.creationTime).format(fullDateFormat);
+
+            const weekNum = moment(order.creationTime).format('w');
+            const dayName = moment(order.creationTime).format('dddd');
+            const monthName = moment(order.creationTime).format('MMMM');
+            const morningOrNigth = moment(order.creationTime).hour() > 15 ? 'Night' : 'Morning';
+
+            let totalPrice = item.price;
+            for (const extra of itemStamp.extras) {
+                totalPrice += Number(extra.price);
+            }
+            //Item from shakes
+            if (itemStamp.status !== CANCELLED && shakesMenuMap.has(item.id)) {
+                shakeRows.push({
+                    date: creationDate,
+                    time: creationTime,
+                    item: item.name,
+                    qty: 1,
+                    value: totalPrice,
+                });
+                totalSales += totalPrice;
+                console.log(
+                    `${creationDate},${creationTime},${item.name},${totalPrice},${weekNum},${dayName},${monthName},${morningOrNigth}`
+                );
+            }
+        }
+    });
+    console.log();
+    console.log('-------------------------');
+    console.log(totalSales);
+    return { rows: shakeRows, csv: shakeRowsText };
 }
 
 function getOrderZone(order) {
@@ -64,7 +108,9 @@ function getOrderZone(order) {
                 deliveryPrice: 0,
                 note: stamps[key].note,
             };
-            let deliveryZone = DELIVERY_DATA.find((item) => item.name.toLocaleLowerCase() === zone.name.toLocaleLowerCase());
+            let deliveryZone = DELIVERY_DATA.find(
+                (item) => item.name.toLocaleLowerCase() === zone.name.toLocaleLowerCase()
+            );
             if (deliveryZone) {
                 zone.deliveryPrice = deliveryZone.deliveryPrice;
                 return zone;
@@ -104,7 +150,7 @@ function setTakewayFristOrder(orders) {
 }
 
 function getTotalDeliveryValue(ordersObj) {
-    return ordersObj.reduce((acum, item) => acum + item.deliveryPrice, 0);    
+    return ordersObj.reduce((acum, item) => acum + item.deliveryPrice, 0);
 }
 
 function getOrderCreatorName(orders) {
@@ -121,5 +167,6 @@ function getOrderCreatorName(orders) {
 module.exports = {
     getRecordFields: getRecordFields,
     getRecordObjects: getRecordObjects,
-    getTotalDeliveryValue: getTotalDeliveryValue
+    getTotalDeliveryValue: getTotalDeliveryValue,
+    getShakeRecords: getShakeRecords,
 };

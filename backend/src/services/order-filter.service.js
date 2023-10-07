@@ -4,7 +4,7 @@ const {
     DELIVERY,
     CALLCENTER_USERS_IDS,
     CANCELLED,
-} = require("../config/constants.config");
+} = require('../config/constants.config');
 
 function orderTypeFilter(orders, orderTypes) {
     return orders.filter((order) => {
@@ -67,4 +67,5 @@ module.exports = {
     onlyDeliveryOrders: onlyDeliveryOrders,
     callCenterUserFilter: callCenterUserFilter,
     cancelledStatusFilter: cancelledStatusFilter,
+    onlyShakesOrders: onlyShakesOrders,
 };

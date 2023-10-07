@@ -106,16 +106,9 @@ class ReportController {
         }
         const shakesMenuObject = await MenuServices.getShakesMenuObject(restaurantId);
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
-        // Call service to filter
-        //const notCancelledOrders = OrderFilterService.cancelledStatusFilter(responseData.data);
-        
-        //Get all shakes records
-        //const shakesOrders = OrderFilterService.onlyShakesOrders(responseData.data, shakesMenuObject);
-        const shakesItems = recordFieldsService.getShakeRecords(responseData.data, shakesMenuObject);
-        //Get total of day sales
 
-        //const objectReport = OrderFormatterService.getShakeRecords(notCancelledOrders);        
-        //const totalSale = OrderFormatterService.getTotalDeliveryValue(objectReport);
+        //Get all shakes records
+        const shakesItems = recordFieldsService.getShakeRecords(responseData.data, shakesMenuObject);
         return res.json({
             msg: "Read-only request",
             data: responseData.data
