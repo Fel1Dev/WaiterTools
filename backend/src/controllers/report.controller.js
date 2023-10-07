@@ -6,9 +6,12 @@ const {
     GoogleSheetOperations,
     OrderFilterService,
     OrderFormatterService,
+    MenuServices,
 } = require("../services/index");
+const recordFieldsService = require("../services/record-fields.service");
 
 class ReportController {
+
     static async getOrders(restaurantId, startTime, endTime) {
         const extReportPath = EXT_API_URL + EXT_REPORTS_PATH;
         console.log("path: " + extReportPath);
@@ -91,6 +94,31 @@ class ReportController {
             msg: "Read-only request",
             data: objectReport,
             totalDelivery: totalDelivery,
+        });
+    }
+
+    async getShakesReportObject(req, res) {
+        console.log(req.query);
+        let { startTime, endTime, restaurantId } = req.query;
+        if (!restaurantId || !endTime || !restaurantId) {
+            res.status(400).json({ stats: 400, message: "Bad parameters." }).send();
+            return;
+        }
+        const shakesMenuObject = await MenuServices.getShakesMenuObject(restaurantId);
+        const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
+        // Call service to filter
+        //const notCancelledOrders = OrderFilterService.cancelledStatusFilter(responseData.data);
+        
+        //Get all shakes records
+        //const shakesOrders = OrderFilterService.onlyShakesOrders(responseData.data, shakesMenuObject);
+        const shakesItems = recordFieldsService.getShakeRecords(responseData.data, shakesMenuObject);
+        //Get total of day sales
+
+        //const objectReport = OrderFormatterService.getShakeRecords(notCancelledOrders);        
+        //const totalSale = OrderFormatterService.getTotalDeliveryValue(objectReport);
+        return res.json({
+            msg: "Read-only request",
+            data: responseData.data
         });
     }
 }
