@@ -70,7 +70,7 @@ function getShakeRecords(orders, shakesMenuMap) {
             const weekNum = moment(order.creationTime).format('w');
             const dayName = moment(order.creationTime).format('dddd');
             const monthName = moment(order.creationTime).format('MMMM');
-            const morningOrNigth = moment(order.creationTime).hour() > 15 ? 'Night' : 'Morning';
+            const morningOrNigth = moment(order.creationTime).hour() > 15 ? 'Noche' : 'Mañana';
 
             let totalPrice = item.price;
             for (const extra of itemStamp.extras) {
@@ -87,7 +87,7 @@ function getShakeRecords(orders, shakesMenuMap) {
                 });
                 totalSales += totalPrice;
                 console.log(
-                    `${creationDate},${creationTime},${item.name},${totalPrice},${weekNum},${dayName},${monthName},${morningOrNigth}`
+                    `${creationDate},${creationTime},${item.name},1,${totalPrice},${totalPrice},${weekNum},${dayName},${monthName},${morningOrNigth}`
                 );
             }
         }

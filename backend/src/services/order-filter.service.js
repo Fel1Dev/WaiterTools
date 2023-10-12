@@ -66,6 +66,5 @@ module.exports = {
     onlyTableFilter: onlyTableFilter,
     onlyDeliveryOrders: onlyDeliveryOrders,
     callCenterUserFilter: callCenterUserFilter,
-    cancelledStatusFilter: cancelledStatusFilter,
-    onlyShakesOrders: onlyShakesOrders,
+    cancelledStatusFilter: cancelledStatusFilter
 };
