@@ -19,4 +19,6 @@ module.exports = {
     MENU_PATH: process.env.MENU_PATH,
     GOOGLE_TOKEN_PATH: process.env.GOOGLE_TOKEN_PATH,
     GOOGLE_SHEET_ID: process.env.GOOGLE_SHEET_ID,
+    WHATSAPP_API_CODE: process.env.WHATSAPP_API_CODE,
+    WHATSAPP_API_KEY: process.env.WHATSAPP_API_KEY,
 };

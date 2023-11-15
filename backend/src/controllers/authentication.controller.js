@@ -4,7 +4,6 @@ const { EXT_API_URL, EXT_AUTH_PATH } = require("../config/index");
 
 class AuthenticationController {
     async authentication(req, res) {
-        console.log(req.body);
         let authenticationType = req.body.authenticationType;
         let hash = req.body.authenticationCredentials;
         const authPath = EXT_API_URL + EXT_AUTH_PATH;
