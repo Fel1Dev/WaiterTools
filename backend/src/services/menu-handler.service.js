@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { EXT_API_URL, EXT_MENU_PATH, SHAKE_CATEGORIE_NAME } = require('../config/index');
+const menuObject = require('../assets/MENU_DATA');
 
 const getMenu = async (restaurantId) => {
     const extMenuPath = EXT_API_URL + EXT_MENU_PATH;
@@ -13,12 +14,15 @@ const getMenu = async (restaurantId) => {
                 },
             })
             .then((response) => {
-                console.log('Resposne!');
+                console.log('Menu response!');
                 menuResponse.data = response.data[0];
             });
     } catch (error) {
         menuResponse.error = true;
         menuResponse.data = 'Error during Menu data creation process: ' + error;
+        //offLine tests
+        console.log('Offline response')
+        menuResponse.data = menuObject.MENU_DATA[0];
     }
     return menuResponse;
 };
@@ -28,6 +32,9 @@ async function getShakesMenuObject(restaurantId) {
 
     const shakeCategorie = new Map();
 
+    if(!menuData.data){
+        return shakeCategorie;
+    }
     menuData.data.categories.forEach((categorie) => {
         const categorieName = categorie.name.toUpperCase().replace(' ', '');
         //Gets SHAKE_CATEGORIE
