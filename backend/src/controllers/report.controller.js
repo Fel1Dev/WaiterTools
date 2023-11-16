@@ -1,20 +1,21 @@
-const axios = require("axios");
+const axios = require('axios');
 
-const { WRITE } = require("../config/constants.config");
-const { EXT_API_URL, EXT_REPORTS_PATH } = require("../config/index");
+const { WRITE } = require('../config/constants.config');
+const { EXT_API_URL, EXT_REPORTS_PATH } = require('../config/index');
 const {
     GoogleSheetOperations,
     OrderFilterService,
     OrderFormatterService,
     MenuServices,
-} = require("../services/index");
-const recordFieldsService = require("../services/record-fields.service");
+    WhatsappServices,
+} = require('../services/index');
+const recordFieldsService = require('../services/record-fields.service');
+const ordersObject = require('../assets/ORDERS_DATA');
 
 class ReportController {
-
     static async getOrders(restaurantId, startTime, endTime) {
         const extReportPath = EXT_API_URL + EXT_REPORTS_PATH;
-        console.log("path: " + extReportPath);
+        console.log('path: ' + extReportPath);
         try {
             const response = await axios
                 .get(extReportPath, {
@@ -29,7 +30,8 @@ class ReportController {
                 });
             return response;
         } catch (error) {
-            console.error("Error during Report creation process: " + error);
+            console.error('Error during Report creation process: ' + error);
+            return { error: false, data: ordersObject.ORDERS_DATA.data };
         }
     }
     // Get all orders since a days
@@ -46,7 +48,7 @@ class ReportController {
         console.log(req.query);
         let { startTime, endTime, restaurantId, requestType } = req.query;
         if (!restaurantId || !endTime || !restaurantId) {
-            res.status(400).json({ stats: 400, message: "Bad parameters." }).send();
+            res.status(400).json({ stats: 400, message: 'Bad parameters.' }).send();
             return;
         }
 
@@ -57,21 +59,21 @@ class ReportController {
         const recordFields = OrderFormatterService.getRecordFields(notCancelledOrders);
 
         if (!requestType || WRITE !== requestType.toUpperCase()) {
-            res.send({ message: "Read-only request", data: recordFields });
+            res.send({ message: 'Read-only request', data: recordFields });
             return;
         }
 
         try {
             let writeObject = await GoogleSheetOperations.writeData(recordFields);
             if (writeObject.status !== 200) {
-                return res.json({ msg: "Something went wrong" });
+                return res.json({ msg: 'Something went wrong' });
             }
             return res.json({
-                msg: "Spreadsheet update sucessfully!",
+                msg: 'Spreadsheet update sucessfully!',
                 data: recordFields,
             });
         } catch (e) {
-            console.log("Error updating the spreadsheet", e);
+            console.log('Error updating the spreadsheet', e);
             res.status(500).send();
         }
     }
@@ -80,7 +82,7 @@ class ReportController {
         console.log(req.query);
         let { startTime, endTime, restaurantId, requestType } = req.query;
         if (!restaurantId || !endTime || !restaurantId) {
-            res.status(400).json({ stats: 400, message: "Bad parameters." }).send();
+            res.status(400).json({ stats: 400, message: 'Bad parameters.' }).send();
             return;
         }
 
@@ -88,10 +90,10 @@ class ReportController {
         // Call service to filter
         const deliveryOrders = OrderFilterService.onlyDeliveryOrders(responseData.data);
         const notCancelledOrders = OrderFilterService.cancelledStatusFilter(deliveryOrders);
-        const objectReport = OrderFormatterService.getRecordObjects(notCancelledOrders);        
+        const objectReport = OrderFormatterService.getRecordObjects(notCancelledOrders);
         const totalDelivery = OrderFormatterService.getTotalDeliveryValue(objectReport);
         return res.json({
-            msg: "Read-only request",
+            msg: 'Read-only request',
             data: objectReport,
             totalDelivery: totalDelivery,
         });
@@ -99,19 +101,36 @@ class ReportController {
 
     async getShakesReportObject(req, res) {
         console.log(req.query);
-        let { startTime, endTime, restaurantId } = req.query;
+        let reponseMsg = 'Read-only request';
+        let { startTime, endTime, restaurantId, sendMessage } = req.query;
         if (!restaurantId || !endTime || !restaurantId) {
-            res.status(400).json({ stats: 400, message: "Bad parameters." }).send();
+            res.status(400).json({ stats: 400, message: 'Bad parameters.' }).send();
             return;
         }
         const shakesMenuObject = await MenuServices.getShakesMenuObject(restaurantId);
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
 
         //Get all shakes records
-        const shakesItems = recordFieldsService.getShakeRecords(responseData.data, shakesMenuObject);
+        const shakesItems = recordFieldsService.getShakeRecords(
+            responseData.data,
+            shakesMenuObject
+        );
+
+        const whatsappMessages = recordFieldsService.buildWhastappMessage(shakesItems);
+        if (sendMessage) {
+            const msgSize = whatsappMessages.length;
+            console.log(msgSize + ' messages to send');
+            whatsappMessages.forEach((saleReport, idx) => {
+                if( WhatsappServices.sendMessage(saleReport)) {
+                    console.log(idx + 'Message sent!');
+                }
+            });
+            reponseMsg = `${msgSize} message sent!`;
+        }
+
         return res.json({
-            msg: "Read-only request",
-            data: responseData.data
+            msg: reponseMsg,
+            data: whatsappMessages,
         });
     }
 }
