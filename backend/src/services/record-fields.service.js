@@ -168,9 +168,117 @@ function getOrderCreatorName(orders) {
     });
 }
 
+function buildWhastappMessage(itemList) {
+    const salesMap = createSalesMap(itemList.rows);
+
+    let messages = createMessagesFromSalesMap(salesMap);
+
+    return messages;
+}
+
+function createSalesMap(itemList) {
+    let salesMap = new Map();
+    if (!itemList) {
+        return salesMap;
+    }
+    itemList.forEach((item) => {
+        let shiftsMap = salesMap.get(item.shortDate);
+
+        if (!shiftsMap) {
+            shiftsMap = new Map();
+            salesMap.set(item.shortDate, shiftsMap);
+        }
+
+        let shiftData = shiftsMap.get(item.shift);
+        if (!shiftData) {
+            const newShakeMap = new Map();
+            shiftData = {
+                shakeMap: newShakeMap,
+                totalShift: item.total,
+            };
+            shiftsMap.set(item.shift, shiftData);
+        } else {
+            shiftData['totalShift'] += item.total;
+        }
+
+        let shakeMap = shiftData['shakeMap'];
+        let shakeData = shakeMap.get(item.name);
+        if (!shakeData) {
+            //const newShakeMap = new Map();
+            shakeData = {
+                name: item.name,
+                qty: item.qty,
+                total: item.total,
+            };
+            shakeMap.set(item.name, shakeData);
+        } else {
+            shakeData['qty'] += item.qty;
+            shakeData['total'] += item.total;
+            shakeMap.set(item.name, shakeData);
+        }
+    });
+
+    console.log('\n: ~ createReportMap ~ reportMap:', salesMap);
+    return salesMap;
+}
+
+function createMessagesFromSalesMap(salesMap) {
+    const messageArr = [];
+    //Check size of the map
+    if (!salesMap) {
+        return;
+    }
+
+    salesMap.forEach((shiftMap, saleDateKey) => {
+        shiftMap.forEach((shiftData, shiftKey) => {
+            let fullMessage = '';
+            let itemLines = '';
+            let totalShiftLine = shiftData['totalShift'];
+            const separatorLine = '----------------';
+            const headLine = `Body Shake To Go`;
+            const saleDate = parse(saleDateKey, 'MM/dd/yyyy', new Date());
+            const saleDateFormatted = format(saleDate, 'dd/MM/yyyy');
+            const saleDay = format(saleDate, 'EEEE', { locale: esFormatDate } );
+            const dateLine = `${toUpperFirst(saleDay)} ${saleDateFormatted}`;
+            
+            shiftData['shakeMap'].forEach((shakeData, ix) => {
+                const formatItemTotal = shakeData.total.toLocaleString();
+                const itemLine = `${shakeData.qty} ${shakeData.name} - $${formatItemTotal}`;
+                itemLines += itemLine + '\n';
+            });
+            itemLines = itemLines.slice(0, -2);
+
+            fullMessage =
+                '*' + headLine + '*\n' +
+                '*' + dateLine + '*\n' +
+                shiftKey + '\n' +
+                itemLines + '\n' +
+                separatorLine + '\n' +
+                '*' + totalShiftLine.toLocaleString() + '*\n';
+                
+                console.log('');
+                console.log('*' + headLine + '*');
+                console.log('*' + dateLine + '*');
+                console.log(shiftKey);
+                console.log(itemLines);
+                console.log(separatorLine);
+                console.log('*' + totalShiftLine.toLocaleString() + '*');
+
+            messageArr.push(fullMessage);
+        });
+    });
+    //return array of messages.
+    return messageArr;
+}
+
+function toUpperFirst(string) { 
+	return string[0].toUpperCase() + string.substring(1) 
+}
+
 module.exports = {
     getRecordFields: getRecordFields,
     getRecordObjects: getRecordObjects,
     getTotalDeliveryValue: getTotalDeliveryValue,
     getShakeRecords: getShakeRecords,
+    buildWhastappMessage: buildWhastappMessage,
 };
