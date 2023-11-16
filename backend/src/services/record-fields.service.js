@@ -1,4 +1,5 @@
-const moment = require('moment');
+const { format, parse } = require('date-fns');
+const  esFormatDate = require('date-fns/locale/es');
 const { DELIVERY_DATA } = require('../assets/DELIVERY_DATA');
 const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require('../config/constants.config');
 
@@ -8,6 +9,10 @@ const defaultZone = {
     zoneNote: '',
 };
 
+const usaFullDateFormat = 'MM/dd/yyyy HH:mm:ss';
+const usaSimpleDate = 'MM/dd/yyyy';
+const localSimpleDate = 'dd/MM/yyyy';
+
 function getRecordFields(orders) {
     let output = [];
     orders = setTakewayFristOrder(orders);
@@ -15,8 +20,8 @@ function getRecordFields(orders) {
         let zone = getOrderZone(order);
         output.push([
             order._id,
-            moment(order.creationTime).format(DDMMYYYY_FORMAT), //23/04/2022
-            moment(order.creationTime).format(FULL_FORMAT), //HH:MM:SS
+            format(order.creationTime, DDMMYYYY_FORMAT), //23/04/2022
+            format(order.creationTime, FULL_FORMAT), //HH:MM:SS
             getOrderValue(order),
             null,
             zone.name,
@@ -39,7 +44,7 @@ function getRecordObjects(orders) {
         let zone = getOrderZone(order);
         deliveryList.push({
             id: order._id,
-            date: moment(order.creationTime).toDate(),
+            date: order.creationTime,
             totalValue: getOrderValue(order),
             userDeliveryPrice: zone.price,
             deliveryPrice: zone.deliveryPrice,
@@ -62,15 +67,13 @@ function getShakeRecords(orders, shakesMenuMap) {
         for (let key in order.itemstamps) {
             const itemStamp = order.itemstamps[key];
             const item = itemStamp.item;
-            const fullDateFormat = 'MM/DD/YYYY HH:mm:ss';
-            const simpleDate = 'MM/DD/YYYY';
-            const creationDate = moment(order.creationTime).format(simpleDate);
-            const creationTime = moment(order.creationTime).format(fullDateFormat);
+            const creationDate = format(order.creationTime, usaSimpleDate);
+            const creationTime = format(order.creationTime, usaFullDateFormat);
 
-            const weekNum = moment(order.creationTime).format('w');
-            const dayName = moment(order.creationTime).format('dddd');
-            const monthName = moment(order.creationTime).format('MMMM');
-            const morningOrNigth = moment(order.creationTime).hour() > 15 ? 'Noche' : 'Mañana';
+            const weekNum = format(order.creationTime, 'w');
+            const dayName = format(order.creationTime, 'eeee');
+            const monthName = format(order.creationTime, 'MMMM');
+            const morningOrNigth = format(order.creationTime, 'H') > 15 ? 'Noche' : 'Mañana';
 
             let totalPrice = item.price;
             for (const extra of itemStamp.extras) {
@@ -79,11 +82,12 @@ function getShakeRecords(orders, shakesMenuMap) {
             //Item from shakes
             if (itemStamp.status !== CANCELLED && shakesMenuMap.has(item.id)) {
                 shakeRows.push({
-                    date: creationDate,
-                    time: creationTime,
-                    item: item.name,
+                    shortDate: creationDate,
+                    creationDate: creationTime,
+                    name: item.name,
                     qty: 1,
-                    value: totalPrice,
+                    total: totalPrice,
+                    shift: morningOrNigth,
                 });
                 totalSales += totalPrice;
                 console.log(
