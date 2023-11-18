@@ -246,7 +246,7 @@ function createMessagesFromSalesMap(salesMap) {
                 const itemLine = `${shakeData.qty} ${shakeData.name} - $${formatItemTotal}`;
                 itemLines += itemLine + '\n';
             });
-            itemLines = itemLines.slice(0, -2);
+            itemLines = itemLines.slice(0, -1);
 
             fullMessage =
                 '*' + headLine + '*\n' +
