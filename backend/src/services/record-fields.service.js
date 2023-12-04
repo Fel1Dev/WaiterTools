@@ -241,7 +241,7 @@ function createMessagesFromSalesMap(salesMap) {
             const saleDay = format(saleDate, 'EEEE', { locale: esFormatDate } );
             const dateLine = `${toUpperFirst(saleDay)} ${saleDateFormatted}`;
             
-            shiftData['shakeMap'].forEach((shakeData, ix) => {
+            shiftData['shakeMap'].forEach((shakeData) => {
                 const formatItemTotal = shakeData.total.toLocaleString();
                 const itemLine = `${shakeData.qty} ${shakeData.name} - $${formatItemTotal}`;
                 itemLines += itemLine + '\n';
