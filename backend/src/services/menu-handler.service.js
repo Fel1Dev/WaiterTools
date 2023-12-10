@@ -42,7 +42,7 @@ async function getShakesMenuObject(restaurantId) {
             //Get categorie objet
             const items = categorie.items;
             //Add to map all items
-            //Select as key the ID
+            //Select key as Id
             items.forEach((item) => {
                 shakeCategorie.set(item.id, item);
             });
