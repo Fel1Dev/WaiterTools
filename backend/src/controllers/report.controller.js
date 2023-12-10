@@ -14,6 +14,7 @@ const ordersObject = require('../assets/ORDERS_DATA');
 
 class ReportController {
     static async getOrders(restaurantId, startTime, endTime) {
+        console.log('Start getOrders');
         const extReportPath = EXT_API_URL + EXT_REPORTS_PATH;
         console.log('path: ' + extReportPath);
         try {
@@ -26,25 +27,30 @@ class ReportController {
                     },
                 })
                 .then((response) => {
+                    console.log('End getOrders');
                     return { error: false, data: response.data };
                 });
             return response;
         } catch (error) {
             console.error('Error during Report creation process: ' + error);
-            return { error: false, data: ordersObject.ORDERS_DATA.data };
+            console.log('End getOrders');
+            return { error: false, data: ordersObject.ORDERS_DATA.data };            
         }
     }
     // Get all orders since a days
     async reportSinceTo(req, res) {
         console.log(req.query);
+        console.log('Start reportSinceTo');
         let { restaurantId, startTime, endTime } = req.query;
 
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
+        console.log('End reportSinceTo');
         return res.send(responseData);
     }
 
     // Get Callcenter reports
     async createCallcenterReport(req, res) {
+        console.log('Start createCallcenterReport');
         console.log(req.query);
         let { startTime, endTime, restaurantId, requestType } = req.query;
         if (!restaurantId || !endTime || !restaurantId) {
@@ -60,6 +66,7 @@ class ReportController {
 
         if (!requestType || WRITE !== requestType.toUpperCase()) {
             res.send({ message: 'Read-only request', data: recordFields });
+            console.log('End createCallcenterReport');
             return;
         }
 
@@ -68,12 +75,14 @@ class ReportController {
             if (writeObject.status !== 200) {
                 return res.json({ msg: 'Something went wrong' });
             }
+            console.log('End createCallcenterReport');
             return res.json({
                 msg: 'Spreadsheet update sucessfully!',
                 data: recordFields,
             });
         } catch (e) {
             console.log('Error updating the spreadsheet', e);
+            console.log('End createCallcenterReport');
             res.status(500).send();
         }
     }
