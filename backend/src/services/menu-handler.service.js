@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { EXT_API_URL, EXT_MENU_PATH, SHAKE_CATEGORIE_NAME } = require('../config/index');
 const menuObject = require('../assets/MENU_DATA');
+const deletedShakesItems = require('../assets/DELETED_SHAKES_ITEMS');
 
 const getMenu = async (restaurantId) => {
     const extMenuPath = EXT_API_URL + EXT_MENU_PATH;
@@ -21,7 +22,7 @@ const getMenu = async (restaurantId) => {
         menuResponse.error = true;
         menuResponse.data = 'Error during Menu data creation process: ' + error;
         //offLine tests
-        console.log('Offline response')
+        console.log('Offline response');
         menuResponse.data = menuObject.MENU_DATA[0];
     }
     return menuResponse;
@@ -32,7 +33,7 @@ async function getShakesMenuObject(restaurantId) {
 
     const shakeCategorie = new Map();
 
-    if(!menuData.data){
+    if (!menuData.data) {
         return shakeCategorie;
     }
     menuData.data.categories.forEach((categorie) => {
@@ -48,7 +49,11 @@ async function getShakesMenuObject(restaurantId) {
             });
         }
     });
-
+    if (deletedShakesItems.DELETED_ITEMS) {
+        deletedShakesItems.DELETED_ITEMS.forEach((deletedShake) => {
+            shakeCategorie.set(deletedShake.id, deletedShake);
+        });
+    }
     return shakeCategorie;
 }
 

@@ -79,7 +79,7 @@ function getShakeRecords(orders, shakesMenuMap) {
             for (const extra of itemStamp.extras) {
                 totalPrice += Number(extra.price);
             }
-            //Item from shakes
+            //Item from shakesCategorie
             if (itemStamp.status !== CANCELLED && shakesMenuMap.has(item.id)) {
                 shakeRows.push({
                     shortDate: creationDate,
