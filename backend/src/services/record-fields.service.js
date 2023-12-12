@@ -3,6 +3,14 @@ const  esFormatDate = require('date-fns/locale/es');
 const { DELIVERY_DATA } = require('../assets/DELIVERY_DATA');
 const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require('../config/constants.config');
 
+const WEEK_FORMAT = 'w';
+const DAY_NAME_FORMAT = 'eeee';
+const MONTH_NAME_FORMAT = 'MMMM';
+const HOUR_FORMAT = 'H';
+const MORNING_HOUR_LIMIT = 15;
+const NIGHT_SHIFT = 'Noche';
+const MORNING_SHIFT = 'Mañana';
+
 const defaultZone = {
     name: TAKEAWAY,
     price: 0,
@@ -59,7 +67,7 @@ function getRecordObjects(orders) {
     return deliveryList;
 }
 
-function getShakeRecords(orders, shakesMenuMap) {
+function getRecordByCategoryMap(orders, categoryMap) {
     let shakeRows = [];
     let shakeRowsText = '';
     let totalSales = 0;
@@ -80,7 +88,7 @@ function getShakeRecords(orders, shakesMenuMap) {
                 totalPrice += Number(extra.price);
             }
             //Item from shakesCategorie
-            if (itemStamp.status !== CANCELLED && shakesMenuMap.has(item.id)) {
+            if (itemStamp.status !== CANCELLED && categoryMap.has(item.id)) {
                 shakeRows.push({
                     shortDate: creationDate,
                     creationDate: creationTime,
@@ -100,6 +108,51 @@ function getShakeRecords(orders, shakesMenuMap) {
     console.log('-------------------------');
     console.log(totalSales);
     return { rows: shakeRows, csv: shakeRowsText };
+}
+
+function calculateTotalPrice(itemStamp) {
+    return itemStamp.extras.reduce((total, extra) => total + Number(extra.price), itemStamp.item.price);
+}
+
+function getRecordByCategoryMap2(orders, categoryMap) {
+    let totalSales = 0;
+    const shakeRows = orders.flatMap((order) => {    
+    return orders.itemstamps
+        .filter((itemStamp) => itemStamp.status !== CANCELLED && categoryMap.has(itemStamp.item.id))
+        .map((itemStamp) => {
+            const item = itemStamp.item;
+            const creationDate = format(order.creationTime, usaSimpleDate);
+            const creationTime = format(order.creationTime, usaFullDateFormat);
+
+            const weekNum = format(order.creationTime, WEEK_FORMAT);
+            const dayName = format(order.creationTime, DAY_NAME_FORMAT);
+            const monthName = format(order.creationTime, MONTH_NAME_FORMAT);
+            const morningOrNigth = format(order.creationTime, HOUR_FORMAT) > MORNING_HOUR_LIMIT ? NIGHT_SHIFT : MORNING_SHIFT;
+
+            let totalPrice = calculateTotalPrice(timeStamp)
+            //Item from shakesCategorie
+            if (itemStamp.status !== CANCELLED && categoryMap.has(item.id)) {
+                
+                
+                totalSales += totalPrice;
+                console.log(
+                    `${creationDate},${creationTime},${item.name},1,${totalPrice},${totalPrice},${weekNum},${dayName},${monthName},${morningOrNigth}`
+                );
+                return {
+                    shortDate: creationDate,
+                    creationDate: creationTime,
+                    name: item.name,
+                    qty: 1,
+                    total: totalPrice,
+                    shift: morningOrNigth,
+                };
+            }
+        });
+    });
+    console.log();
+    console.log('-------------------------');
+    console.log(totalSales);
+    return { rows: shakeRows, csv: '' };
 }
 
 function getOrderZone(order) {
@@ -279,6 +332,6 @@ module.exports = {
     getRecordFields: getRecordFields,
     getRecordObjects: getRecordObjects,
     getTotalDeliveryValue: getTotalDeliveryValue,
-    getShakeRecords: getShakeRecords,
+    getShakeRecords: getRecordByCategoryMap,
     buildWhastappMessage: buildWhastappMessage,
 };
