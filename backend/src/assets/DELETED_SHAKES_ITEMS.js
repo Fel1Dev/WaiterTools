@@ -1,8 +1,31 @@
-//Some deleted items that are not in the menu anymore but are in the database
+//Some deleted items that are not in the menu anymore but are in old sale reports.
 
 module.exports = {
     DELETED_ITEMS: [
-        { id: '0dbce6fa0c945cef37ee1952', name: 'Nevado Café - Modificado', price: 11000 },
-        { id: 'a06ad82bce200c204a16a1d7', name: 'Waffle - Modificado', price: 12000 },
+        'Waffle',
+        'Mini Waffle',
+        'EnergyBoots',
+        'Power Detox',
+        'Berry Berry',
+        'Energy Whey o Zero',
+        'Moca Milo',
+        'Chocolevrone',
+        'Coco bongo',
+        'Paranoia',
+        'Manjuice',
+        'T rex coffe',
+        'Hawaiian Punch',
+        'Amino Berry',
+        'Cherry Moon ',
+        'Sencillo de proteína Whey',
+        'Sencillo proteina Whey o Zero',
+        'Creatina Sunrise',
+        'Whey con fruta',
+        'Batido Barbie',
+        'Promo Barbie',
+        'Servicio de licuado en leche',
+        'Donkey',
+        'Batifruta sin proteína',
+        'Energy en almendras',
     ],
 };

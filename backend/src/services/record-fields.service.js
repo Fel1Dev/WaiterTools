@@ -1,7 +1,8 @@
 const { format, parse } = require('date-fns');
-const  esFormatDate = require('date-fns/locale/es');
+const esFormatDate = require('date-fns/locale/es');
 const { DELIVERY_DATA } = require('../assets/DELIVERY_DATA');
 const { DDMMYYYY_FORMAT, FULL_FORMAT, TAKEAWAY, CANCELLED } = require('../config/constants.config');
+const leveshteinDistanceService = require('./leveshtein-distance.service');
 
 const WEEK_FORMAT = 'w';
 const DAY_NAME_FORMAT = 'eeee';
@@ -67,7 +68,7 @@ function getRecordObjects(orders) {
     return deliveryList;
 }
 
-function getRecordByCategoryMap(orders, categoryMap) {
+function getRecordByShakeNames(orders, checkedNamesArray) {
     let shakeRows = [];
     let shakeRowsText = '';
     let totalSales = 0;
@@ -75,20 +76,26 @@ function getRecordByCategoryMap(orders, categoryMap) {
         for (let key in order.itemstamps) {
             const itemStamp = order.itemstamps[key];
             const item = itemStamp.item;
-            const creationDate = format(order.creationTime, usaSimpleDate);
-            const creationTime = format(order.creationTime, usaFullDateFormat);
+            const clearedName = item.name.toUpperCase().replaceAll(' ', '');
 
-            const weekNum = format(order.creationTime, 'w');
-            const dayName = format(order.creationTime, 'eeee');
-            const monthName = format(order.creationTime, 'MMMM');
-            const morningOrNigth = format(order.creationTime, 'H') > 15 ? 'Noche' : 'Mañana';
-
-            let totalPrice = item.price;
-            for (const extra of itemStamp.extras) {
-                totalPrice += Number(extra.price);
-            }
             //Item from shakesCategorie
-            if (itemStamp.status !== CANCELLED && categoryMap.has(item.id)) {
+            if (
+                itemStamp.status !== CANCELLED &&
+                isItemOnNameList(clearedName, checkedNamesArray)
+            ) {
+                const creationDate = format(order.creationTime, usaSimpleDate);
+                const creationTime = format(order.creationTime, usaFullDateFormat);
+
+                const weekNum = format(order.creationTime, 'w');
+                const dayName = format(order.creationTime, 'eeee');
+                const monthName = format(order.creationTime, 'MMMM');
+                const morningOrNigth = format(order.creationTime, 'H') > 15 ? 'Noche' : 'Mañana';
+
+                let totalPrice = item.price;
+                for (const extra of itemStamp.extras) {
+                    totalPrice += Number(extra.price);
+                }
+
                 shakeRows.push({
                     shortDate: creationDate,
                     creationDate: creationTime,
@@ -107,47 +114,74 @@ function getRecordByCategoryMap(orders, categoryMap) {
     console.log();
     console.log('-------------------------');
     console.log(totalSales);
-    return { rows: shakeRows, csv: shakeRowsText };
+    return { rows: shakeRows, csv: shakeRowsText, total: totalSales };
+}
+
+function isItemOnNameList(currentItemName, namesArray) {
+    if (currentItemName === 'NOTA') {
+        return false;
+    }
+    for (let name of namesArray) {
+        let distance = leveshteinDistanceService.levenshteinDistance(name, currentItemName);
+        if (currentItemName.includes('SENCILLO')) {
+            console.log('SENCILLO');
+        }
+        if (distance <= 3) {
+            if (distance > 0) {
+                console.log('-----------------');
+                console.log('' + currentItemName + ' - ' + name);
+                console.log('-> distance: ' + distance);
+                console.log('-----------------');
+            }
+            return true;
+        }
+    }
 }
 
 function calculateTotalPrice(itemStamp) {
-    return itemStamp.extras.reduce((total, extra) => total + Number(extra.price), itemStamp.item.price);
+    return itemStamp.extras.reduce(
+        (total, extra) => total + Number(extra.price),
+        itemStamp.item.price
+    );
 }
 
 function getRecordByCategoryMap2(orders, categoryMap) {
     let totalSales = 0;
-    const shakeRows = orders.flatMap((order) => {    
-    return orders.itemstamps
-        .filter((itemStamp) => itemStamp.status !== CANCELLED && categoryMap.has(itemStamp.item.id))
-        .map((itemStamp) => {
-            const item = itemStamp.item;
-            const creationDate = format(order.creationTime, usaSimpleDate);
-            const creationTime = format(order.creationTime, usaFullDateFormat);
+    const shakeRows = orders.flatMap((order) => {
+        return orders.itemstamps
+            .filter(
+                (itemStamp) => itemStamp.status !== CANCELLED && categoryMap.has(itemStamp.item.id)
+            )
+            .map((itemStamp) => {
+                const item = itemStamp.item;
+                const creationDate = format(order.creationTime, usaSimpleDate);
+                const creationTime = format(order.creationTime, usaFullDateFormat);
 
-            const weekNum = format(order.creationTime, WEEK_FORMAT);
-            const dayName = format(order.creationTime, DAY_NAME_FORMAT);
-            const monthName = format(order.creationTime, MONTH_NAME_FORMAT);
-            const morningOrNigth = format(order.creationTime, HOUR_FORMAT) > MORNING_HOUR_LIMIT ? NIGHT_SHIFT : MORNING_SHIFT;
+                const weekNum = format(order.creationTime, WEEK_FORMAT);
+                const dayName = format(order.creationTime, DAY_NAME_FORMAT);
+                const monthName = format(order.creationTime, MONTH_NAME_FORMAT);
+                const morningOrNigth =
+                    format(order.creationTime, HOUR_FORMAT) > MORNING_HOUR_LIMIT
+                        ? NIGHT_SHIFT
+                        : MORNING_SHIFT;
 
-            let totalPrice = calculateTotalPrice(timeStamp)
-            //Item from shakesCategorie
-            if (itemStamp.status !== CANCELLED && categoryMap.has(item.id)) {
-                
-                
-                totalSales += totalPrice;
-                console.log(
-                    `${creationDate},${creationTime},${item.name},1,${totalPrice},${totalPrice},${weekNum},${dayName},${monthName},${morningOrNigth}`
-                );
-                return {
-                    shortDate: creationDate,
-                    creationDate: creationTime,
-                    name: item.name,
-                    qty: 1,
-                    total: totalPrice,
-                    shift: morningOrNigth,
-                };
-            }
-        });
+                let totalPrice = calculateTotalPrice(timeStamp);
+                //Item from shakesCategorie
+                if (itemStamp.status !== CANCELLED && categoryMap.has(item.id)) {
+                    totalSales += totalPrice;
+                    console.log(
+                        `${creationDate},${creationTime},${item.name},1,${totalPrice},${totalPrice},${weekNum},${dayName},${monthName},${morningOrNigth}`
+                    );
+                    return {
+                        shortDate: creationDate,
+                        creationDate: creationTime,
+                        name: item.name,
+                        qty: 1,
+                        total: totalPrice,
+                        shift: morningOrNigth,
+                    };
+                }
+            });
     });
     console.log();
     console.log('-------------------------');
@@ -291,9 +325,9 @@ function createMessagesFromSalesMap(salesMap) {
             const headLine = `Body Shake To Go`;
             const saleDate = parse(saleDateKey, 'MM/dd/yyyy', new Date());
             const saleDateFormatted = format(saleDate, 'dd/MM/yyyy');
-            const saleDay = format(saleDate, 'EEEE', { locale: esFormatDate } );
+            const saleDay = format(saleDate, 'EEEE', { locale: esFormatDate });
             const dateLine = `${toUpperFirst(saleDay)} ${saleDateFormatted}`;
-            
+
             shiftData['shakeMap'].forEach((shakeData) => {
                 const formatItemTotal = shakeData.total.toLocaleString();
                 const itemLine = `${shakeData.qty} ${shakeData.name} - $${formatItemTotal}`;
@@ -302,20 +336,29 @@ function createMessagesFromSalesMap(salesMap) {
             itemLines = itemLines.slice(0, -1);
 
             fullMessage =
-                '*' + headLine + '*\n' +
-                '*' + dateLine + '*\n' +
-                shiftKey + '\n' +
-                itemLines + '\n' +
-                separatorLine + '\n' +
-                '*' + totalShiftLine.toLocaleString() + '*\n';
-                
-                console.log('');
-                console.log('*' + headLine + '*');
-                console.log('*' + dateLine + '*');
-                console.log(shiftKey);
-                console.log(itemLines);
-                console.log(separatorLine);
-                console.log('*' + totalShiftLine.toLocaleString() + '*');
+                '*' +
+                headLine +
+                '*\n' +
+                '*' +
+                dateLine +
+                '*\n' +
+                shiftKey +
+                '\n' +
+                itemLines +
+                '\n' +
+                separatorLine +
+                '\n' +
+                '*' +
+                totalShiftLine.toLocaleString() +
+                '*\n';
+
+            console.log('');
+            console.log('*' + headLine + '*');
+            console.log('*' + dateLine + '*');
+            console.log(shiftKey);
+            console.log(itemLines);
+            console.log(separatorLine);
+            console.log('*' + totalShiftLine.toLocaleString() + '*');
 
             messageArr.push(fullMessage);
         });
@@ -324,14 +367,14 @@ function createMessagesFromSalesMap(salesMap) {
     return messageArr;
 }
 
-function toUpperFirst(string) { 
-	return string[0].toUpperCase() + string.substring(1) 
+function toUpperFirst(string) {
+    return string[0].toUpperCase() + string.substring(1);
 }
 
 module.exports = {
     getRecordFields: getRecordFields,
     getRecordObjects: getRecordObjects,
     getTotalDeliveryValue: getTotalDeliveryValue,
-    getShakeRecords: getRecordByCategoryMap,
+    getShakeRecords: getRecordByShakeNames,
     buildWhastappMessage: buildWhastappMessage,
 };

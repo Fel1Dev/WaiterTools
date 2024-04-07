@@ -116,13 +116,13 @@ class ReportController {
             res.status(400).json({ stats: 400, message: 'Bad parameters.' }).send();
             return;
         }
-        const shakesMenuObject = await MenuServices.getShakesMenuObject(restaurantId);
+        const shakesNamesArray = await MenuServices.getShakeNamesArray(restaurantId);
         const responseData = await ReportController.getOrders(restaurantId, startTime, endTime);
 
         //Get all shakes records
         const shakesItems = recordFieldsService.getShakeRecords(
             responseData.data,
-            shakesMenuObject
+            shakesNamesArray
         );
 
         const whatsappMessages = recordFieldsService.buildWhastappMessage(shakesItems);
@@ -139,6 +139,7 @@ class ReportController {
 
         return res.json({
             msg: reponseMsg,
+            total: shakesItems.total,
             data: whatsappMessages,
         });
     }

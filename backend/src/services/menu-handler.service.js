@@ -28,36 +28,34 @@ const getMenu = async (restaurantId) => {
     return menuResponse;
 };
 
-async function getShakesMenuObject(restaurantId) {
+async function getShakeNamesArray(restaurantId) {
     const menuData = await getMenu(restaurantId);
 
-    const shakeCategorie = new Map();
+    const shakeNames = [];
 
     if (!menuData.data) {
-        return shakeCategorie;
+        return shakeNames;
     }
     menuData.data.categories.forEach((categorie) => {
         const categorieName = categorie.name.toUpperCase().replace(' ', '');
         //Gets SHAKE_CATEGORIE
         if (categorieName === SHAKE_CATEGORIE_NAME) {
-            //Get categorie objet
-            const items = categorie.items;
-            //Add to map all items
-            //Select key as Id
-            items.forEach((item) => {
-                shakeCategorie.set(item.id, item);
+            const shakeItems = categorie.items;
+
+            shakeItems.forEach((item) => {
+                shakeNames.push(item.name.toUpperCase().replaceAll(' ', ''));
             });
         }
     });
     if (deletedShakesItems.DELETED_ITEMS) {
-        deletedShakesItems.DELETED_ITEMS.forEach((deletedShake) => {
-            shakeCategorie.set(deletedShake.id, deletedShake);
+        deletedShakesItems.DELETED_ITEMS.forEach((deletedShakeName) => {
+            shakeNames.push(deletedShakeName.toUpperCase().replaceAll(' ', ''));
         });
     }
-    return shakeCategorie;
+    return shakeNames;
 }
 
 module.exports = {
     getMenu: getMenu,
-    getShakesMenuObject: getShakesMenuObject,
+    getShakeNamesArray: getShakeNamesArray,
 };
