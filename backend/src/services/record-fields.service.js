@@ -123,15 +123,12 @@ function isItemOnNameList(currentItemName, namesArray) {
     }
     for (let name of namesArray) {
         let distance = leveshteinDistanceService.levenshteinDistance(name, currentItemName);
-        if (currentItemName.includes('SENCILLO')) {
-            console.log('SENCILLO');
-        }
         if (distance <= 3) {
             if (distance > 0) {
-                console.log('-----------------');
-                console.log('' + currentItemName + ' - ' + name);
-                console.log('-> distance: ' + distance);
-                console.log('-----------------');
+                //console.log('-----------------');
+                //console.log(`${currentItemName} - ${name} -> distance: ${distance}`);
+                //console.log('-----------------');
+                //console.log();
             }
             return true;
         }
